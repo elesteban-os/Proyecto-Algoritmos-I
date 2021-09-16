@@ -12,7 +12,8 @@ public class Client {
     private DataInputStream input;
     private DataOutputStream output;
     private Scanner scan;
-    private Message message;
+    private reader read;
+    private sender send;
 
     public void startClient(int port) throws IOException {
         this.scan = new Scanner(System.in);
@@ -20,18 +21,13 @@ public class Client {
         Socket client = new Socket("localhost", port);
         DataInputStream input = new DataInputStream(client.getInputStream());
         DataOutputStream output = new DataOutputStream(client.getOutputStream());
-        Message message = new Message();
+
+
 
         while (true){
             try{
             String msj = scan.nextLine();
             output.writeUTF(msj);
-
-            String problem = input.readUTF();
-            String action = message.problem(problem);
-
-            System.out.println(action);
-
 
             } catch (IOException io) {
 
