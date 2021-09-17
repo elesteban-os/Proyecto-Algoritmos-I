@@ -15,6 +15,7 @@ public class Server {
     Socket client;
     Socket client2;
     reader read;
+    sender send;
 
     public void start(int puerto) throws IOException {
         String msg;
@@ -30,11 +31,16 @@ public class Server {
         this.input = new DataInputStream(client2.getInputStream());
         this.output = new DataOutputStream(client2.getOutputStream());
         this.read = new reader(input);
+        this.send = new sender(output);
 
         while (true) {
             for (int i = 0; i < 3; i++) {
                 String message = this.read.startRead();
                 System.out.println(message);
+            }
+
+            for (int i = 0; i < 3; i++) {
+                this.send.startSender();
             }
         }
 

@@ -11,26 +11,24 @@ public class Client {
     private Socket client;
     private DataInputStream input;
     private DataOutputStream output;
-    private Scanner scan;
     private reader read;
     private sender send;
 
     public void startClient(int port) throws IOException {
-        this.scan = new Scanner(System.in);
+        this.client = new Socket("localhost", port);
+        this.input = new DataInputStream(client.getInputStream());
+        this.output = new DataOutputStream(client.getOutputStream());
+        this.read = new reader(this.input);
+        this.send = new sender(this.output);
 
-        Socket client = new Socket("localhost", port);
-        DataInputStream input = new DataInputStream(client.getInputStream());
-        DataOutputStream output = new DataOutputStream(client.getOutputStream());
+        while (true) {
+            for (int i = 0; i < 3; i++) {
+                this.send.startSender();
+            }
 
-
-
-        while (true){
-            try{
-            String msj = scan.nextLine();
-            output.writeUTF(msj);
-
-            } catch (IOException io) {
-
+            for (int i = 0; i < 3; i++) {
+                String message = this.read.startRead();
+                System.out.println(message);
             }
         }
 
