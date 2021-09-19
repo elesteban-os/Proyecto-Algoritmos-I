@@ -5,17 +5,21 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class sender {
-    private Scanner scan;
-    private DataOutputStream output;
+    private final DataOutputStream output;
+    private final Scanner scan;
 
     public sender (DataOutputStream output) {
         this.output = output;
         this.scan = new Scanner(System.in);
     }
 
-    public void startSender() throws IOException {
-        this.output.writeUTF(scan.nextLine());
+    public void scanSender() throws IOException {
+        String message = this.scan.nextLine();
+        this.output.writeUTF(message);
     }
 
+    public void startSender(String message) throws IOException {
+        this.output.writeUTF(message);
+    }
 
 }

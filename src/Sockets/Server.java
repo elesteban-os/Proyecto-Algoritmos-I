@@ -1,5 +1,6 @@
 package Sockets;
 
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,6 +18,9 @@ public class Server {
     reader read;
     sender send;
 
+    JButton but1;
+    JLabel label2;
+
     public void start(int puerto) throws IOException {
         String msg;
 
@@ -30,21 +34,27 @@ public class Server {
 
         this.input = new DataInputStream(client2.getInputStream());
         this.output = new DataOutputStream(client2.getOutputStream());
-        this.read = new reader(input);
+
+        this.read = new reader(input, label2, but1);
+        new Thread(this.read).start();
+
         this.send = new sender(output);
 
-        while (true) {
-            for (int i = 0; i < 3; i++) {
-                String message = this.read.startRead();
-                System.out.println(message);
-            }
-
-            for (int i = 0; i < 3; i++) {
-                this.send.startSender();
-            }
-        }
-
     }
+
+    public String lastRead() throws IOException {
+        return this.read.getToReturn();
+    }
+
+    public void startSendServ(String message) throws IOException {
+            this.send.startSender(message);
+    }
+
+    public void setLabels(JLabel lab2, JButton but1){
+        this.label2 = lab2;
+        this.but1 = but1;
+    }
+
     public static void main(String[] args){
         try {
             Server server = new Server();

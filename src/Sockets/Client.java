@@ -1,5 +1,6 @@
 package Sockets;
 
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,36 +14,49 @@ public class Client {
     private DataOutputStream output;
     private reader read;
     private sender send;
+    private JButton but1;
+    private JLabel label2;
+    private interfaz1clien interfaz;
 
-    public void startClient(int port) throws IOException {
+    public void startClient(int port, interfaz1clien interfez) throws IOException {
         this.client = new Socket("localhost", port);
         this.input = new DataInputStream(client.getInputStream());
         this.output = new DataOutputStream(client.getOutputStream());
-        this.read = new reader(this.input);
+        this.interfaz = interfez;
+        this.read = new reader(this.input, this.interfaz.getRecibiendo(), this.interfaz.getBotonDado());
+
+        new Thread(this.read).start();
+
         this.send = new sender(this.output);
 
+
+
         while (true) {
-            for (int i = 0; i < 3; i++) {
-                this.send.startSender();
-            }
-
-            for (int i = 0; i < 3; i++) {
-                String message = this.read.startRead();
-                System.out.println(message);
-            }
+            this.send.scanSender();
         }
-
     }
 
-    public static void main(String[] args) {
+    public String startReadCli() throws IOException {
+        return this.read.getToReturn();
+    }
+
+    public void startSendCli(String message) throws IOException {
+        this.send.startSender(message);
+    }
+
+    public void setLabels(JLabel recibiendo, JButton botonDado) {
+        this.label2 = recibiendo;
+        this.but1 = botonDado;
+    }
+
+    /*public static void main(String[] args) {
+        Client client = new Client();
         try {
-            Client client = new Client();
             client.startClient(1234);
         } catch(IOException io){
 
         }
 
-    }
-
+    }*/
 
 }
