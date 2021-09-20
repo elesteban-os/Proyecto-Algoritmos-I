@@ -1,4 +1,4 @@
-package Board;
+package List;
 
 public class DoubleLinkedList {
 
