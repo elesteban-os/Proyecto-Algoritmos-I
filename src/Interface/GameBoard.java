@@ -54,7 +54,7 @@ public class GameBoard {
         LanzarDado.setIcon(imageDado);
 
         generateBoard();
-        showBoard();
+        displayBoard();
         this.root.add(this.playerIcon1);
         this.root.add(this.playerIcon2);
         this.root.add(this.namePlayer1);
@@ -93,16 +93,12 @@ public class GameBoard {
         }
     }
 
-    public void showBoard() {
+    public void displayBoard() {
         DoubleNode b = this.board.getHead();
         while (b != null) {
             this.root.add(b.getBox().getLabel());
             b = b.getNext();
         }
-    }
-
-    public static void main(String[] args){
-        GameBoard GameBoard1 = new GameBoard();
     }
 
 }

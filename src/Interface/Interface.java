@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Interface {
-    private JFrame princialWindow = new JFrame("Math Socket");
+    private JFrame principalWindow = new JFrame("Math Socket");
     private JLabel title = new JLabel("Math Socket");
     private JTextField name = new JTextField();
     private JButton create = new JButton("Crear");
@@ -117,11 +117,11 @@ public class Interface {
         this.waiting.setFont(new Font("Bahnschrift", Font.PLAIN, 20));
         this.waiting.setVisible(false);
 
-        this.princialWindow.add(this.title);
-        this.princialWindow.add(this.create);
-        this.princialWindow.add(this.join);
-        this.princialWindow.add(this.name);
-        this.princialWindow.add(this.waiting);
+        this.principalWindow.add(this.title);
+        this.principalWindow.add(this.create);
+        this.principalWindow.add(this.join);
+        this.principalWindow.add(this.name);
+        this.principalWindow.add(this.waiting);
 
 
         // GameBoard
@@ -199,29 +199,29 @@ public class Interface {
         LanzarDado.setBounds(215,505,50,50);
         LanzarDado.setIcon(imagenDado);
 
-        this.princialWindow.add(this.C1);
-        this.princialWindow.add(this.C2);
-        this.princialWindow.add(this.C3);
-        this.princialWindow.add(this.C4);
-        this.princialWindow.add(this.C5);
-        this.princialWindow.add(this.C6);
-        this.princialWindow.add(this.C7);
-        this.princialWindow.add(this.C8);
-        this.princialWindow.add(this.C9);
-        this.princialWindow.add(this.C10);
-        this.princialWindow.add(this.C11);
-        this.princialWindow.add(this.C12);
-        this.princialWindow.add(this.C13);
-        this.princialWindow.add(this.C14);
-        this.princialWindow.add(this.C15);
-        this.princialWindow.add(this.C16);
-        this.princialWindow.add(this.playerIcon1);
-        this.princialWindow.add(this.playerIcon2);
-        this.princialWindow.add(this.namePlayer1);
-        this.princialWindow.add(this.namePlayer2);
-        this.princialWindow.add(this.turnTitle);
-        this.princialWindow.add(this.playerTurn);
-        this.princialWindow.add(this.LanzarDado);
+        this.principalWindow.add(this.C1);
+        this.principalWindow.add(this.C2);
+        this.principalWindow.add(this.C3);
+        this.principalWindow.add(this.C4);
+        this.principalWindow.add(this.C5);
+        this.principalWindow.add(this.C6);
+        this.principalWindow.add(this.C7);
+        this.principalWindow.add(this.C8);
+        this.principalWindow.add(this.C9);
+        this.principalWindow.add(this.C10);
+        this.principalWindow.add(this.C11);
+        this.principalWindow.add(this.C12);
+        this.principalWindow.add(this.C13);
+        this.principalWindow.add(this.C14);
+        this.principalWindow.add(this.C15);
+        this.principalWindow.add(this.C16);
+        this.principalWindow.add(this.playerIcon1);
+        this.principalWindow.add(this.playerIcon2);
+        this.principalWindow.add(this.namePlayer1);
+        this.principalWindow.add(this.namePlayer2);
+        this.principalWindow.add(this.turnTitle);
+        this.principalWindow.add(this.playerTurn);
+        this.principalWindow.add(this.LanzarDado);
 
         this.labels = new ArrayList<JLabel>();
 
@@ -254,11 +254,11 @@ public class Interface {
         this.playerTurn.setVisible(false);
         this.LanzarDado.setVisible(false);
 
-        this.princialWindow.setSize(505, 610);
-        this.princialWindow.setLayout(null);
-        this.princialWindow.setResizable(false);
-        this.princialWindow.setVisible(true);
-        this.princialWindow.setDefaultCloseOperation(princialWindow.EXIT_ON_CLOSE);
+        this.principalWindow.setSize(505, 610);
+        this.principalWindow.setLayout(null);
+        this.principalWindow.setResizable(false);
+        this.principalWindow.setVisible(true);
+        this.principalWindow.setDefaultCloseOperation(principalWindow.EXIT_ON_CLOSE);
 
     }
 
