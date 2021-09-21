@@ -4,24 +4,20 @@ public class DoubleNode {
 
     private DoubleNode prev;
     private DoubleNode next;
-    private String type;
+    private Box box;
 
-    public DoubleNode(String type){
-        this(null, type, null);
+    public DoubleNode(Box box){
+        this(null, box, null);
     }
 
-    public DoubleNode(DoubleNode p, String type, DoubleNode n){
+    public DoubleNode(DoubleNode p, Box box, DoubleNode n){
         this.prev = p;
-        this.type = type;
+        this.box = box;
         this.next = n;
     }
 
-    public String getBoxType() {
-        return type;
-    }
-
-    public void setBoxType(String type) {
-        this.type = type;
+    public Box getBox() {
+        return this.box;
     }
 
     public DoubleNode getPrev() {

@@ -14,7 +14,7 @@ public class DoubleLinkedList {
         return head == null;
     }
 
-    public void addBox(String box){
+    public void addBox(Box box){
         DoubleNode n = new DoubleNode(tail, box, null);
         if (isEmpty()){
             head = tail = n;
