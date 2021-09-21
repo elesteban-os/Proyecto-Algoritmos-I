@@ -1,5 +1,7 @@
 package Sockets;
 
+import Interface.Interface;
+
 import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,8 +23,10 @@ public class Server {
     JButton but1;
     JLabel label2;
 
-    public void start(int puerto) throws IOException {
-        String msg;
+    Interface interface1;
+
+    public void start(int puerto, Interface inter) throws IOException {
+        this.interface1 = inter;
 
         ServerSocket server = new ServerSocket(puerto);
         Socket serverS = new Socket("localhost", puerto);
@@ -31,6 +35,8 @@ public class Server {
         System.out.println("Cliente conectado");
         Socket client2 = server.accept();
         System.out.println("Cliente conectado");
+
+        inter.setWaitingClose();
 
         this.input = new DataInputStream(client2.getInputStream());
         this.output = new DataOutputStream(client2.getOutputStream());
@@ -58,7 +64,7 @@ public class Server {
     public static void main(String[] args){
         try {
             Server server = new Server();
-            server.start(1234);
+            server.start(1234, null);
 
         } catch (IOException io) {
 

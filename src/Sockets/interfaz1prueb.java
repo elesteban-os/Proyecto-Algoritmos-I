@@ -83,16 +83,17 @@ public class interfaz1prueb {
 
         }
 
-        public static void main(String[] args) {
+
+        /* public static void main(String[] args) {
             Server server = new Server();
             interfaz1prueb interfaz = new interfaz1prueb(server);
             server.setLabels(interfaz.getRecibiendo(), interfaz.getBotonDado());
             try {
-                server.start(1234);
+                server.start(1234, interfaz1prueb);
             } catch(IOException io){
 
             }
 
-        }
+        } */
 
 }

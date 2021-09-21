@@ -144,9 +144,5 @@ public class GameBoard {
         this.root.setVisible(true);
         this.root.setDefaultCloseOperation(root.EXIT_ON_CLOSE);
     }
-
-    public static void main(String[] args){
-        GameBoard GameBoard1 = new GameBoard();
-    }
-
 }
+
