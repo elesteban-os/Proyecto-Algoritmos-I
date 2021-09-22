@@ -1,21 +1,22 @@
 package Sockets;
 
+import Interface.Interface;
+
 import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class reader implements Runnable {
     private final DataInputStream input;
     private String toReturn;
-    private JLabel label = null;
-    private JButton button;
+    private Interface interfaz;
 
 
-    public reader(DataInputStream input, JLabel label, JButton button){
+    public reader(DataInputStream input, Interface interfaz){
         this.input = input;
-        this.label = label;
-        this.button = button;
+        this.interfaz = interfaz;
     }
 
     public reader(DataInputStream input){
@@ -41,6 +42,9 @@ public class reader implements Runnable {
             String num = action.nextToken();
 
             switch(arg) {
+                case ("name"):
+                    this.interfaz.setEnemyName(num);
+                    break;
                 case ("next"):
                     this.toReturn = "ready";
                     break;
@@ -56,14 +60,11 @@ public class reader implements Runnable {
                             this.toReturn = "nothing";
                             break;
                     }
+                case("startBoxes"):
+                    this.toReturn = message;
+                    break;
             }
             System.out.println(getToReturn());
-            if (this.label != null) {
-                this.label.setText("Recibiendo: " + getToReturn());
-                if (this.toReturn == "ready"){
-                    this.button.setEnabled(true);
-                }
-            }
         }
     }
 

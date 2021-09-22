@@ -41,7 +41,7 @@ public class Server {
         this.input = new DataInputStream(client2.getInputStream());
         this.output = new DataOutputStream(client2.getOutputStream());
 
-        this.read = new reader(input, label2, but1);
+        this.read = new reader(input, inter);
         new Thread(this.read).start();
 
         this.send = new sender(output);

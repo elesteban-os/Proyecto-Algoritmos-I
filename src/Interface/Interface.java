@@ -59,17 +59,22 @@ public class Interface {
             waiting.setVisible(true);
             JOptionPane.showMessageDialog(null, "Esperando a que se una un usuario");
 
-            createServer();
+            try {
+                createServer();
+            } catch (IOException io){
+
+            }
         }
     };
 
-    public void createServer(){
-        try {
-            server = new Server();
-            server.start(1234, this.thisInterface);
-        } catch (IOException e) {
+    public void createServer() throws IOException {
 
-        }
+        server = new Server();
+        server.start(1234, this.thisInterface);
+
+        this.namePlayer1.setText(this.name.getText());
+        this.server.startSendServ("name "+this.namePlayer1.getText());
+        this.server.startSendServ("startBoxes 2 1 3 1 2 3 1 2 1 3 2 3 1 3 2 1 2 3");
     }
 
     public void setWaitingClose(){
@@ -91,15 +96,34 @@ public class Interface {
 
     ActionListener joinActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
+            JOptionPane.showMessageDialog(null, "Uniendose a una partida");
+            LanzarDado.setEnabled(false);
+
+            try {
+                createClient();
+            }catch (IOException io){
+
+            }
+            setWaitingClose();
             title.setVisible(false);
             name.setVisible(false);
             create.setVisible(false);
             join.setVisible(false);
 
-            waiting.setVisible(true);
-
         }
     };
+
+    public void createClient() throws IOException {
+        this.client = new Client();
+        this.client.startClient(1234, this.thisInterface);
+
+        this.namePlayer1.setText(this.name.getText());
+        this.client.startSendCli("name "+this.namePlayer1.getText());
+    }
+
+    public void setEnemyName(String name){
+        this.namePlayer2.setText(name);
+    }
 
     public Interface(){
         this.title.setBounds(95, 150, 300, 100);
@@ -125,7 +149,7 @@ public class Interface {
 
 
         // GameBoard
-        ImageIcon imagenCasilla = new ImageIcon(getClass().getResource("/Images/casilla.png"));
+        ImageIcon imagenCasilla = new ImageIcon(getClass().getResource("/Images/challenge.png"));
         ImageIcon imagenDado = new ImageIcon(getClass().getResource("/Images/dice.png"));
         ImageIcon imageUser = new ImageIcon(getClass().getResource("/Images/user.png"));
 
