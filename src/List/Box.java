@@ -15,7 +15,7 @@ public class Box {
         this.type = type;
         if (Objects.equals(type, "Goal")) {
             this.image = new ImageIcon(getClass().getResource("/Images/goal.png"));
-            this.type = "tunnel";
+            this.type = "Tunnel";
         } else if (Objects.equals(type, "Tunnel")) {
             this.image = new ImageIcon(getClass().getResource("/Images/tunnel.png"));
         } else if (Objects.equals(type, "Trap")) {
