@@ -26,7 +26,6 @@ public class GameBoard {
         }
     };
 
-
     public GameBoard(){
 
         ImageIcon imageDado = new ImageIcon(getClass().getResource("/Images/dice.png"));
@@ -55,8 +54,6 @@ public class GameBoard {
         LanzarDado.setIcon(imageDado);
 
         generateBoard();
-        displayBoard();
-
         this.root.add(this.playerIcon1);
         this.root.add(this.playerIcon2);
         this.root.add(this.namePlayer1);
@@ -73,35 +70,65 @@ public class GameBoard {
     }
 
     public void generateBoard() {
-        this.board = new DoubleLinkedList();
-        int min = 1;
-        int max = 3;
-        int range = max - min + 1;
-        int y = 130;
-        for (int i = 0; i < 4; i++) {
-            int x = 70;
-            for (int j = 0; j < 4; j ++) {
-                int box = (int) (Math.random() * range) + min;
-                if (box == 1) {
-                    this.board.addBox(new Box("Tunnel", x, y));
-                } else if (box == 2) {
-                    this.board.addBox(new Box("Trap", x, y));
-                } else {
-                    this.board.addBox(new Box("Challenge", x, y));
+        StringBuilder boardID = new StringBuilder();
+        int traps = (int) (Math.random() * 7);
+        int tunnels = 8 - traps;
+        int challenges = 8;
+        for (int i = 0; i < 16; i++) {
+            String type = "";
+            if (i == 0 || i == 15) {
+                type = "Goal";
+                tunnels --;
+            } else {
+                boolean added = false;
+                while (!added) {
+                    int box = (int) (Math.random() * 3) + 1;
+                    if (box == 1 && tunnels > 1) {
+                        type = "Tunnel";
+                        tunnels--;
+                        added = true;
+                    } else if (box == 2 && traps > 0) {
+                        type = "Trap";
+                        traps--;
+                        added = true;
+                    } else if (challenges > 0) {
+                        type = "Challenge";
+                        challenges--;
+                        added = true;
+                    }
                 }
-                x += 92;
             }
-            y += 92;
+            if (i < 15) {
+                boardID.append(type).append(",");
+            } else {
+                boardID.append(type);
+            }
+        }
+        createBoard(boardID.toString());
+    }
+
+    public void createBoard(String id) {
+        this.board = new DoubleLinkedList();
+        String[] boxArray = id.split(",");
+        for (int i = 0; i < boxArray.length; i++) {
+            int x;
+            if (i < 4 || (8 <= i && i < 12)) {
+                x = 70 + ((i % 4) * 92);
+            } else {
+                x = 346 - ((i % 4) * 92);
+            }
+            int y = 130 + ((i / 4) * 92);
+            this.board.addBox(new Box(boxArray[i], x, y));
+        }
+        DoubleNode box = this.board.getHead();
+        while (box != null) {
+            this.root.add(box.getBox().getLabel());
+            box = box.getNext();
         }
     }
 
-
-    public void displayBoard() {
-        DoubleNode b = this.board.getHead();
-        while (b != null) {
-            this.root.add(b.getBox().getLabel());
-            b = b.getNext();
-        }
+    public static void main (String args[]){
+        GameBoard game = new GameBoard();
     }
 
 }

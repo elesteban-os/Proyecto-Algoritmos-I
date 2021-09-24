@@ -13,7 +13,10 @@ public class Box {
 
     public Box(String type, int x, int y) {
         this.type = type;
-        if (Objects.equals(type, "Tunnel")) {
+        if (Objects.equals(type, "Goal")) {
+            this.image = new ImageIcon(getClass().getResource("/Images/goal.png"));
+            this.type = "Tunnel";
+        } else if (Objects.equals(type, "Tunnel")) {
             this.image = new ImageIcon(getClass().getResource("/Images/tunnel.png"));
         } else if (Objects.equals(type, "Trap")) {
             this.image = new ImageIcon(getClass().getResource("/Images/trap.png"));
