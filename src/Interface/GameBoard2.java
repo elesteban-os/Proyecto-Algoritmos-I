@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GameBoard {
+public class GameBoard2 {
     private JFrame root = new JFrame("TABLERO");
     private DoubleLinkedList board;
     private JLabel playerIcon1 = new JLabel();
@@ -17,20 +17,24 @@ public class GameBoard {
     private JLabel namePlayer2 = new JLabel();
     private JLabel turnTitle = new JLabel();
     private JLabel playerTurn = new JLabel();
-    private JButton LanzarDado = new JButton();
+    private JButton Dado = new JButton();
+    private JLabel Avatar1 = new JLabel();
 
-    ActionListener LanzarDadoActionListener = new ActionListener() {
+    private Movimiento moveAvatar = new Movimiento(Avatar1);
+
+
+    ActionListener DadoActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-             root.setVisible(false);
+            new Thread(moveAvatar).start();
         }
     };
 
-
-    public GameBoard(){
+    public GameBoard2(){
 
         ImageIcon imageDado = new ImageIcon(getClass().getResource("/Images/dice.png"));
         ImageIcon imageUser = new ImageIcon(getClass().getResource("/Images/user.png"));
+        ImageIcon imgPeon1 = new ImageIcon(getClass().getResource("/Images/peon1.png"));
 
         playerIcon1.setBounds(40,5,100,100);
         playerIcon1.setIcon(imageUser);
@@ -51,8 +55,12 @@ public class GameBoard {
         playerTurn.setBounds(215,40,100,50);
         playerTurn.setText("Player1");
 
-        LanzarDado.setBounds(215,505,50,50);
-        LanzarDado.setIcon(imageDado);
+        Dado.setBounds(215,505,50,50);
+        Dado.setIcon(imageDado);
+        Dado.addActionListener(DadoActionListener);
+
+        Avatar1.setBounds(25,135,50,50);
+        Avatar1.setIcon(imgPeon1);
 
         generateBoard();
         displayBoard();
@@ -63,7 +71,8 @@ public class GameBoard {
         this.root.add(this.namePlayer2);
         this.root.add(this.turnTitle);
         this.root.add(this.playerTurn);
-        this.root.add(this.LanzarDado);
+        this.root.add(this.Dado);
+        this.root.add(this.Avatar1);
 
         this.root.setSize(505, 610);
         this.root.setLayout(null);
@@ -95,7 +104,6 @@ public class GameBoard {
         }
     }
 
-
     public void displayBoard() {
         DoubleNode b = this.board.getHead();
         while (b != null) {
@@ -104,4 +112,7 @@ public class GameBoard {
         }
     }
 
+    public static void main (String[] args){
+        GameBoard2 Gameboard2 = new GameBoard2();
+    }
 }
