@@ -48,17 +48,8 @@ public class Server {
 
     }
 
-    public String lastRead() throws IOException {
-        return this.read.getToReturn();
-    }
-
     public void startSendServ(String message) throws IOException {
             this.send.startSender(message);
-    }
-
-    public void setLabels(JLabel lab2, JButton but1){
-        this.label2 = lab2;
-        this.but1 = but1;
     }
 
     public static void main(String[] args){
