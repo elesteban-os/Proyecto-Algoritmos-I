@@ -86,7 +86,7 @@ public class interfaz1clien {
 
         }
 
-        public static void main(String[] args) {
+        /*public static void main(String[] args) {
             Client client = new Client();
             interfaz1clien interfaz = new interfaz1clien(client);
             client.setLabels(interfaz.getRecibiendo(), interfaz.getBotonDado());
@@ -97,5 +97,6 @@ public class interfaz1clien {
             }
 
         }
+         */
 
 }
