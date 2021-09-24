@@ -21,5 +21,4 @@ public class sender {
     public void startSender(String message) throws IOException {
         this.output.writeUTF(message);
     }
-
 }

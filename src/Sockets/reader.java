@@ -2,10 +2,8 @@ package Sockets;
 
 import Interface.Interface;
 
-import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class reader implements Runnable {
