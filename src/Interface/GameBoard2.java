@@ -19,8 +19,13 @@ public class GameBoard2 {
     private JLabel playerTurn = new JLabel();
     private JButton Dado = new JButton();
     private JLabel Avatar1 = new JLabel();
+    private JLabel Avatar2 = new JLabel();
 
-    private Movimiento moveAvatar = new Movimiento(Avatar1);
+    int linea1 = 1;
+    int linea2 = 1;
+    int casilla1 =1;
+    int casilla2 = 1;
+    private Movimiento moveAvatar = new Movimiento(Avatar1, Avatar2, playerTurn, linea1, linea2, casilla1, casilla2);
 
 
     ActionListener DadoActionListener = new ActionListener() {
@@ -35,6 +40,7 @@ public class GameBoard2 {
         ImageIcon imageDado = new ImageIcon(getClass().getResource("/Images/dice.png"));
         ImageIcon imageUser = new ImageIcon(getClass().getResource("/Images/user.png"));
         ImageIcon imgPeon1 = new ImageIcon(getClass().getResource("/Images/peon1.png"));
+        ImageIcon imgPeon2 = new ImageIcon(getClass().getResource("/Images/peon2.png"));
 
         playerIcon1.setBounds(40,5,100,100);
         playerIcon1.setIcon(imageUser);
@@ -50,20 +56,19 @@ public class GameBoard2 {
 
         turnTitle.setBounds(208,20,100,50);
         turnTitle.setText("TURNO DE:");
-        turnTitle.getFont();
 
-        playerTurn.setBounds(215,40,100,50);
-        playerTurn.setText("Player1");
+        playerTurn.setBounds(235,40,100,50);
+        playerTurn.setText("1");
 
         Dado.setBounds(215,505,50,50);
         Dado.setIcon(imageDado);
         Dado.addActionListener(DadoActionListener);
 
-        Avatar1.setBounds(25,135,50,50);
+        Avatar1.setBounds(85,135,50,50);
         Avatar1.setIcon(imgPeon1);
 
-        generateBoard();
-        displayBoard();
+        Avatar2.setBounds(85,170,50,50);
+        Avatar2.setIcon(imgPeon2);
 
         this.root.add(this.playerIcon1);
         this.root.add(this.playerIcon2);
@@ -73,12 +78,17 @@ public class GameBoard2 {
         this.root.add(this.playerTurn);
         this.root.add(this.Dado);
         this.root.add(this.Avatar1);
+        this.root.add(this.Avatar2);
+
+        generateBoard();
+        displayBoard();
 
         this.root.setSize(505, 610);
         this.root.setLayout(null);
         this.root.setResizable(false);
         this.root.setVisible(true);
         this.root.setDefaultCloseOperation(root.EXIT_ON_CLOSE);
+
     }
 
     public void generateBoard() {
