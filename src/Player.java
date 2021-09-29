@@ -30,13 +30,13 @@ public class Player {
     }
 
     public void move(int times){
-        if (Objects.equals(this.position.getBox().getType(), "Tunnel")){
+        if (Objects.equals(this.position.getSquare().getKind(), "Tunnel")){
             for (int i = 0; i <= times; i++) {
                 if (this.position.getNext() != null) {
                     this.position = this.position.getNext();
                 }
             }
-        } else if (Objects.equals(this.position.getBox().getType(), "Trap")){
+        } else if (Objects.equals(this.position.getSquare().getKind(), "Trap")){
             for (int i = 0; i <= times; i++) {
                 if (this.position.getPrev() != null) {
                     this.position = this.position.getPrev();
