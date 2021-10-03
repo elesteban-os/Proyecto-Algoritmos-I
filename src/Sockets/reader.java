@@ -58,10 +58,11 @@ public class reader implements Runnable {
                             this.toReturn = "nothing";
                             break;
                     }
-                case("startBoxes"):
-                    this.toReturn = message;
+                case("board"):
+                    this.toReturn = num;
                     break;
             }
+            this.interfaz.setLastMessage(getToReturn());
             System.out.println(getToReturn());
         }
     }

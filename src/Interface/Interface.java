@@ -9,7 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import List.*;
 
+/**
+ *
+ */
 public class Interface {
     private JFrame principalWindow = new JFrame("Math Socket");
     private JLabel title = new JLabel("Math Socket");
@@ -17,24 +21,6 @@ public class Interface {
     private JButton create = new JButton("Crear");
     private JButton join = new JButton("Unirse");
 
-    private ArrayList<JLabel> labels;
-
-    private JLabel C1 = new JLabel();
-    private JLabel C2 = new JLabel();
-    private JLabel C3 = new JLabel();
-    private JLabel C4 = new JLabel();
-    private JLabel C5 = new JLabel();
-    private JLabel C6 = new JLabel();
-    private JLabel C7 = new JLabel();
-    private JLabel C8 = new JLabel();
-    private JLabel C9 = new JLabel();
-    private JLabel C10 = new JLabel();
-    private JLabel C11= new JLabel();
-    private JLabel C12 = new JLabel();
-    private JLabel C13 = new JLabel();
-    private JLabel C14 = new JLabel();
-    private JLabel C15 = new JLabel();
-    private JLabel C16 = new JLabel();
     private JLabel playerIcon1 = new JLabel();
     private JLabel playerIcon2 = new JLabel();
     private JLabel namePlayer1 = new JLabel();
@@ -42,12 +28,30 @@ public class Interface {
     private JLabel turnTitle = new JLabel();
     private JLabel playerTurn = new JLabel();
     private JButton LanzarDado = new JButton();
+    private JLabel lastDice = new JLabel();
+    private JLabel Avatar2 = new JLabel();
+    private JLabel Avatar1 = new JLabel();
 
     private JLabel waiting = new JLabel("Esperando a que se una otro usuario.");
 
     private Server server;
     private Client client;
     private Interface thisInterface;
+
+    private DoubleLinkedList board = new DoubleLinkedList();
+
+    private SquareFactory boardGenerator = new SquareFactory();
+    private String id = boardGenerator.generateBoard();
+
+    private String lastMessage;
+
+    private Player player;
+
+    private DoubleNode square;
+
+    ImageIcon imgPeon1 = new ImageIcon(getClass().getResource("/Images/peon1.png"));
+    ImageIcon imgPeon2 = new ImageIcon(getClass().getResource("/Images/peon2.png"));
+
 
     ActionListener createActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
@@ -74,16 +78,21 @@ public class Interface {
 
         this.namePlayer1.setText(this.name.getText());
         this.server.startSendServ("name "+this.namePlayer1.getText());
-        this.server.startSendServ("startBoxes 2 1 3 1 2 3 1 2 1 3 2 3 1 3 2 1 2 3");
+        this.server.startSendServ("board "+this.id);
+
+        this.board = boardGenerator.createBoard(this.id);
+        DoubleNode square = this.board.getHead();
+        while (square != null) {
+            this.principalWindow.add(square.getSquare().getLabel());
+            square = square.getNext();
+        }
+
+        //this.player = new Player(this.name.getText(), square, this.Avatar1);
+        this.square = square;
     }
 
     public void setWaitingClose(){
         this.waiting.setVisible(false);
-
-        for (JLabel lab : this.labels) {
-            lab.setVisible(true);
-        }
-
         this.playerIcon1.setVisible(true);
         this.playerIcon2.setVisible(true);
         this.namePlayer1.setVisible(true);
@@ -91,8 +100,13 @@ public class Interface {
         this.turnTitle.setVisible(true);
         this.playerTurn.setVisible(true);
         this.LanzarDado.setVisible(true);
+        this.lastDice.setVisible(true);
+        this.Avatar1.setVisible(true);
+        this.Avatar2.setVisible(true);
+
 
     }
+
 
     ActionListener joinActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
@@ -110,6 +124,13 @@ public class Interface {
             create.setVisible(false);
             join.setVisible(false);
 
+            board = boardGenerator.createBoard(lastMessage);
+            DoubleNode square = board.getHead();
+            while (square != null) {
+                principalWindow.add(square.getSquare().getLabel());
+                square = square.getNext();
+            }
+
         }
     };
 
@@ -119,6 +140,24 @@ public class Interface {
 
         this.namePlayer1.setText(this.name.getText());
         this.client.startSendCli("name "+this.namePlayer1.getText());
+    }
+
+    ActionListener diceButton = new ActionListener() {
+        public void actionPerformed(ActionEvent ae){
+            int max = 3;
+            int min = 1;
+            int range = max - min + 1;
+            int dice = (int) (Math.random() * range) + min;
+            lastDice.setText(String.valueOf(dice));
+            System.out.println(dice);
+
+            Runnable run = new Player(name.getText(), square, Avatar1, dice);
+            new Thread(run).start();
+        }
+    };
+
+    public void setLastMessage(String message){
+        this.lastMessage = message;
     }
 
     public void setEnemyName(String name){
@@ -152,54 +191,14 @@ public class Interface {
         ImageIcon imagenCasilla = new ImageIcon(getClass().getResource("/Images/challenge.png"));
         ImageIcon imagenDado = new ImageIcon(getClass().getResource("/Images/dice.png"));
         ImageIcon imageUser = new ImageIcon(getClass().getResource("/Images/user.png"));
+        ImageIcon imgPeon1 = new ImageIcon(getClass().getResource("/Images/peon1.png"));
+        ImageIcon imgPeon2 = new ImageIcon(getClass().getResource("/Images/peon2.png"));
 
-        C1.setBounds(70,130,100,100);
-        C1.setIcon(imagenCasilla);
+        Avatar1.setBounds(85,135,50,50);
+        Avatar1.setIcon(imgPeon1);
 
-        C2.setBounds(162,130,100,100);
-        C2.setIcon(imagenCasilla);
-
-        C3.setBounds(254,130,100,100);
-        C3.setIcon(imagenCasilla);
-
-        C4.setBounds(346,130,100,100);
-        C4.setIcon(imagenCasilla);
-
-        C5.setBounds(70,222,100,100);
-        C5.setIcon(imagenCasilla);
-
-        C6.setBounds(162,222,100,100);
-        C6.setIcon(imagenCasilla);
-
-        C7.setBounds(254,222,100,100);
-        C7.setIcon(imagenCasilla);
-
-        C8.setBounds(346,222,100,100);
-        C8.setIcon(imagenCasilla);
-
-        C9.setBounds(70,314,100,100);
-        C9.setIcon(imagenCasilla);
-
-        C10.setBounds(162,314,100,100);
-        C10.setIcon(imagenCasilla);
-
-        C11.setBounds(254,314,100,100);
-        C11.setIcon(imagenCasilla);
-
-        C12.setBounds(346,314,100,100);
-        C12.setIcon(imagenCasilla);
-
-        C13.setBounds(70,406,100,100);
-        C13.setIcon(imagenCasilla);
-
-        C14.setBounds(162,406,100,100);
-        C14.setIcon(imagenCasilla);
-
-        C15.setBounds(254,406,100,100);
-        C15.setIcon(imagenCasilla);
-
-        C16.setBounds(346,406,100,100);
-        C16.setIcon(imagenCasilla);
+        Avatar2.setBounds(85,170,50,50);
+        Avatar2.setIcon(imgPeon2);
 
         playerIcon1.setBounds(40,5,100,100);
         playerIcon1.setIcon(imageUser);
@@ -222,23 +221,11 @@ public class Interface {
 
         LanzarDado.setBounds(215,505,50,50);
         LanzarDado.setIcon(imagenDado);
+        LanzarDado.addActionListener(diceButton);
 
-        this.principalWindow.add(this.C1);
-        this.principalWindow.add(this.C2);
-        this.principalWindow.add(this.C3);
-        this.principalWindow.add(this.C4);
-        this.principalWindow.add(this.C5);
-        this.principalWindow.add(this.C6);
-        this.principalWindow.add(this.C7);
-        this.principalWindow.add(this.C8);
-        this.principalWindow.add(this.C9);
-        this.principalWindow.add(this.C10);
-        this.principalWindow.add(this.C11);
-        this.principalWindow.add(this.C12);
-        this.principalWindow.add(this.C13);
-        this.principalWindow.add(this.C14);
-        this.principalWindow.add(this.C15);
-        this.principalWindow.add(this.C16);
+        lastDice.setBounds(300,505,50,50);
+        lastDice.setText("0");
+
         this.principalWindow.add(this.playerIcon1);
         this.principalWindow.add(this.playerIcon2);
         this.principalWindow.add(this.namePlayer1);
@@ -246,29 +233,10 @@ public class Interface {
         this.principalWindow.add(this.turnTitle);
         this.principalWindow.add(this.playerTurn);
         this.principalWindow.add(this.LanzarDado);
+        this.principalWindow.add(this.lastDice);
+        this.principalWindow.add(this.Avatar1);
+        this.principalWindow.add(this.Avatar2);
 
-        this.labels = new ArrayList<JLabel>();
-
-        this.labels.add(C1);
-        this.labels.add(C2);
-        this.labels.add(C3);
-        this.labels.add(C4);
-        this.labels.add(C5);
-        this.labels.add(C6);
-        this.labels.add(C7);
-        this.labels.add(C8);
-        this.labels.add(C9);
-        this.labels.add(C10);
-        this.labels.add(C11);
-        this.labels.add(C12);
-        this.labels.add(C13);
-        this.labels.add(C14);
-        this.labels.add(C15);
-        this.labels.add(C16);
-
-        for (JLabel lab : this.labels) {
-            lab.setVisible(false);
-        }
 
         this.playerIcon1.setVisible(false);
         this.playerIcon2.setVisible(false);
@@ -277,6 +245,9 @@ public class Interface {
         this.turnTitle.setVisible(false);
         this.playerTurn.setVisible(false);
         this.LanzarDado.setVisible(false);
+        this.lastDice.setVisible(false);
+        this.Avatar1.setVisible(false);
+        this.Avatar2.setVisible(false);
 
         this.principalWindow.setSize(505, 610);
         this.principalWindow.setLayout(null);
