@@ -2,7 +2,6 @@ package Sockets;
 
 import Interface.Interface;
 
-import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -23,25 +22,11 @@ public class Client {
         this.output = new DataOutputStream(client.getOutputStream());
         this.interfaz = interfaz;
         this.read = new reader(this.input, this.interfaz);
-
         new Thread(this.read).start();
-
         this.send = new sender(this.output);
-
     }
 
     public void startSendCli(String message) throws IOException {
         this.send.startSender(message);
     }
-
-    /*public static void main(String[] args) {
-        Client client = new Client();
-        try {
-            client.startClient(1234);
-        } catch(IOException io){
-
-        }
-
-    }*/
-
 }

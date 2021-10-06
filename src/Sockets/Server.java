@@ -47,21 +47,8 @@ public class Server {
         this.send = new sender(output);
 
     }
-
     public void startSendServ(String message) throws IOException {
             this.send.startSender(message);
     }
-
-    public static void main(String[] args){
-        try {
-            Server server = new Server();
-            server.start(1234, null);
-
-        } catch (IOException io) {
-
-        }
-
-    }
-
 
 }

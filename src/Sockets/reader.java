@@ -17,11 +17,6 @@ public class reader implements Runnable {
         this.interfaz = interfaz;
     }
 
-    public reader(DataInputStream input){
-        this.input = input;
-    }
-
-
     public String getToReturn(){
         return this.toReturn;
     }
