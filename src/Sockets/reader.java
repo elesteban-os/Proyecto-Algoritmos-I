@@ -11,17 +11,24 @@ public class reader implements Runnable {
     private String toReturn;
     private Interface interfaz;
 
-
+    /**
+     * @param input permite recibir contenido de un socket
+     * @param interfaz interfaz de usuario
+     */
     public reader(DataInputStream input, Interface interfaz){
         this.input = input;
         this.interfaz = interfaz;
     }
 
+    /**
+     * @return retorna un String
+     */
     public String getToReturn(){
         return this.toReturn;
     }
-
+    
     public void run(){
+    
         while (true){
             String message = "";
             try{
@@ -29,11 +36,11 @@ public class reader implements Runnable {
             } catch (IOException io){
 
             }
-
+            
             StringTokenizer action = new StringTokenizer(message);
             String arg = action.nextToken();
             String num = action.nextToken();
-
+            
             switch(arg) {
                 case ("name"):
                     this.interfaz.setEnemyName(num);

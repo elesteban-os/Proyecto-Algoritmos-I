@@ -16,6 +16,13 @@ public class Client {
     private sender send;
     private Interface interfaz;
 
+    /**
+     * 
+     * @param port es el puerto 
+     * @param interfaz es la interfaz grafica de usuario
+     * @throws IOException detecta excepciones de E/S
+     */
+
     public void startClient(int port, Interface interfaz) throws IOException {
         this.client = new Socket("localhost", port);
         this.input = new DataInputStream(client.getInputStream());
@@ -26,6 +33,11 @@ public class Client {
         this.send = new sender(this.output);
     }
 
+    /**
+     * 
+     * @param message envía un mensaje al usuario
+     * @throws IOException detecta excepciones de E/S
+     */
     public void startSendCli(String message) throws IOException {
         this.send.startSender(message);
     }

@@ -24,7 +24,11 @@ public class Server {
     JLabel label2;
 
     Interface interface1;
-
+    /**
+     * @param puerto es el puerto que permitirá unirse a la partida
+     * @param inter es la interfaz gráfica
+     * @throws IOException detecta excepciones de E/S
+     */
     public void start(int puerto, Interface inter) throws IOException {
         this.interface1 = inter;
 
@@ -47,6 +51,10 @@ public class Server {
         this.send = new sender(output);
 
     }
+    /**
+     * @param message es el mensaje a enviar.
+     * @throws IOException detecta excepciones de E/S
+     */
     public void startSendServ(String message) throws IOException {
             this.send.startSender(message);
     }
