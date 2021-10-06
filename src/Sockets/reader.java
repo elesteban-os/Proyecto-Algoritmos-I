@@ -50,6 +50,9 @@ public class reader implements Runnable {
                     break;
                 case ("dice"):
                     this.toReturn = num;
+                    int dice = Integer.parseInt(num);
+                    System.out.println(dice);
+                    this.interfaz.moveEnemy(dice);
                     break;
                 case ("box"):
                     switch (num){
@@ -62,6 +65,7 @@ public class reader implements Runnable {
                     }
                 case("board"):
                     this.toReturn = num;
+                    this.interfaz.makeLabel(num);
                     break;
             }
             this.interfaz.setLastMessage(getToReturn());

@@ -1,5 +1,6 @@
 package List;
 
+import Interface.Interface;
 import List.*;
 
 import javax.swing.*;
@@ -12,15 +13,22 @@ public class Player implements Runnable {
     private String name;
     private DoubleNode position;
     private JLabel avatar;
-    private int casilla1 = 1;
-    private int line1 = 1;
+    private int casilla;
+    private int line;
     private int move;
+    private Interface inter;
+    private boolean noBox;
 
-    public Player(String name, DoubleNode board, JLabel avatar, int move){
+    public Player(String name, DoubleNode board, JLabel avatar, int move, Interface interfacee, int line, int casilla,
+                  int id, boolean noBox){
         this.name = name;
         this.position = board;
         this.avatar = avatar;
         this.move = move;
+        this.inter = interfacee;
+        this.line = line;
+        this.casilla = casilla;
+        this.noBox = noBox;
     }
 
     public void setName(String name) {
@@ -42,7 +50,8 @@ public class Player implements Runnable {
     }
 
     public void moveList(int times){
-        if (Objects.equals(this.position.getSquare().getKind(), "Tunnel")){
+        this.inter.moveSquare1();
+        /*if (Objects.equals(this.position.getSquare().getKind(), "Tunnel")){
             for (int i = 0; i <= times; i++) {
                 if (this.position.getNext() != null) {
                     this.position = this.position.getNext();
@@ -54,7 +63,7 @@ public class Player implements Runnable {
                     this.position = this.position.getPrev();
                 }
             }
-        }
+        }*/
     }
 
     public void run() {
@@ -68,14 +77,15 @@ public class Player implements Runnable {
         int cantAvanzar = 92;
         int recorrido = 0;
 
-        for(int i=0; i != 4; i++) {
-            if (line1 % 2 == 0) {
+        for(int i=0; i != this.move; i++) {
+            if (line % 2 == 0) {
                 while (recorrido < (cantAvanzar)) {
-                    if (casilla1 % 4 == 0) {
+                    if (casilla % 4 == 0) {
                         moveyA1 += 5;
                         this.avatar.setLocation(movexA1, moveyA1);
                         recorrido += 5;
-                        line1 += 1;
+                        line += 1;
+                        this.inter.addLine1();
                     } else {
                         movexA1 -= 5;
                         this.avatar.setLocation(movexA1, moveyA1);
@@ -88,16 +98,18 @@ public class Player implements Runnable {
                         Thread.currentThread().interrupt();
                     }
                 }
-                casilla1 += 1;
+                casilla += 1;
+                this.inter.addCasilla1();
             } else {
 
                 while (recorrido < (cantAvanzar)) {
 
-                    if (casilla1 % 4 == 0) {
+                    if (casilla % 4 == 0) {
                         moveyA1 += 5;
                         this.avatar.setLocation(movexA1, moveyA1);
                         recorrido += 5;
-                        line1 += 1;
+                        line += 1;
+                        this.inter.addLine1();
                     } else {
                         movexA1 += 5;
                         this.avatar.setLocation(movexA1, moveyA1);
@@ -111,10 +123,17 @@ public class Player implements Runnable {
                     }
 
                 }
-                casilla1 += 1;
+                casilla += 1;
+                this.inter.addCasilla1();
+
             }
-            System.out.println("casilla de P1 = " + casilla1);
+            System.out.println("casilla de P1 = " + casilla);
+            moveList(1);
             recorrido = 0;
         }
+        if (noBox == false) {
+            this.inter.actualBox(1);
+        }
+
     }
 }

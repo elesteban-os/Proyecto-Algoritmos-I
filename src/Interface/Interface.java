@@ -40,17 +40,18 @@ public class Interface {
 
     private DoubleLinkedList board = new DoubleLinkedList();
 
-    private SquareFactory boardGenerator = new SquareFactory();
-    private String id = boardGenerator.generateBoard();
-
     private String lastMessage;
 
     private Player player;
 
     private DoubleNode square;
+    private DoubleNode square2;
 
     ImageIcon imgPeon1 = new ImageIcon(getClass().getResource("/Images/peon1.png"));
     ImageIcon imgPeon2 = new ImageIcon(getClass().getResource("/Images/peon2.png"));
+
+    private int casilla1 = 1;
+    private int line1 = 1;
 
 
     ActionListener createActionListener = new ActionListener() {
@@ -78,17 +79,23 @@ public class Interface {
 
         this.namePlayer1.setText(this.name.getText());
         this.server.startSendServ("name "+this.namePlayer1.getText());
-        this.server.startSendServ("board "+this.id);
 
-        this.board = boardGenerator.createBoard(this.id);
-        DoubleNode square = this.board.getHead();
-        while (square != null) {
-            this.principalWindow.add(square.getSquare().getLabel());
-            square = square.getNext();
+
+        SquareFactory boardGenerator = new SquareFactory();
+        String id = boardGenerator.generateBoard();
+
+        this.server.startSendServ("board "+id);
+
+        this.board = boardGenerator.createBoard(id);
+        DoubleNode squaretemp = this.board.getHead();
+        this.square = squaretemp;
+        while (squaretemp != null) {
+            this.principalWindow.add(squaretemp.getSquare().getLabel());
+            squaretemp = squaretemp.getNext();
         }
+        System.out.println(this.square.getSquare());
 
-        //this.player = new Player(this.name.getText(), square, this.Avatar1);
-        this.square = square;
+
     }
 
     public void setWaitingClose(){
@@ -103,7 +110,6 @@ public class Interface {
         this.lastDice.setVisible(true);
         this.Avatar1.setVisible(true);
         this.Avatar2.setVisible(true);
-
 
     }
 
@@ -124,13 +130,6 @@ public class Interface {
             create.setVisible(false);
             join.setVisible(false);
 
-            board = boardGenerator.createBoard(lastMessage);
-            DoubleNode square = board.getHead();
-            while (square != null) {
-                principalWindow.add(square.getSquare().getLabel());
-                square = square.getNext();
-            }
-
         }
     };
 
@@ -140,6 +139,21 @@ public class Interface {
 
         this.namePlayer1.setText(this.name.getText());
         this.client.startSendCli("name "+this.namePlayer1.getText());
+
+    }
+
+    public void makeLabel(String id) {
+        SquareFactory boardGenerator = new SquareFactory();
+        this.board = boardGenerator.createBoard(id);
+        DoubleNode squaremaker = this.board.getHead();
+        this.square = squaremaker;
+        System.out.println(squaremaker.getSquare().getKind());
+        while (squaremaker != null) {
+            this.principalWindow.add(squaremaker.getSquare().getLabel());
+            squaremaker.getSquare().getLabel().setVisible(true);
+            System.out.println(squaremaker.getSquare().getKind());
+            squaremaker = squaremaker.getNext();
+        }
     }
 
     ActionListener diceButton = new ActionListener() {
@@ -151,10 +165,52 @@ public class Interface {
             lastDice.setText(String.valueOf(dice));
             System.out.println(dice);
 
-            Runnable run = new Player(name.getText(), square, Avatar1, dice);
+            Runnable run = new Player(name.getText(), square, Avatar1, dice, thisInterface, line1, casilla1, 1, false);
             new Thread(run).start();
+
+            try{
+                server.startSendServ("dice "+dice);
+            } catch (IOException io) {
+
+            }
+
         }
     };
+
+    public void moveEnemy(int num){
+        Runnable run = new Player(name.getText(), square, Avatar1, num, thisInterface, line1, casilla1, 1, true);
+        new Thread(run).start();
+    }
+
+    public void actualBox(int squar){
+        System.out.println(this.square.getSquare().getKind());
+        if (this.square.getSquare().getKind().equals("Challenge")){
+            String num = JOptionPane.showInputDialog("Cuánto es 2+2");
+            System.out.println("-"+num+"-");
+            if (num.equals("4")){
+                System.out.println("sies");
+            }
+        }
+        else if (this.square.getSquare().getKind().equals("Trap")){
+            System.out.println("se echa para atras");
+        }
+        else if (this.square.getSquare().getKind().equals("Tunnel")){
+            System.out.println("se echa para atras");
+        }
+
+    }
+
+    public void moveSquare1(){
+        this.square = this.square.getNext();
+    }
+
+    public void addLine1() {
+        this.line1++;
+    }
+
+    public void addCasilla1() {
+        this.casilla1++;
+    }
 
     public void setLastMessage(String message){
         this.lastMessage = message;
@@ -163,6 +219,7 @@ public class Interface {
     public void setEnemyName(String name){
         this.namePlayer2.setText(name);
     }
+
 
     public Interface(){
         this.title.setBounds(95, 150, 300, 100);
