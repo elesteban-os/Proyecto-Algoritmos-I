@@ -54,6 +54,31 @@ public class reader implements Runnable {
                     System.out.println(dice);
                     this.interfaz.moveEnemy(dice);
                     break;
+                case ("challenge"):
+                    String oper;
+                    int result = 0;
+                    int max = 50;
+                    int min = 1;
+                    int range = max - min + 1;
+                    int num1Chal = (int) (Math.random() * range) + min;
+                    int num2Chal = (int) (Math.random() * range) + min;
+
+                    max = 4;
+                    int operation = (int) (Math.random() * range) + min;
+
+                    if (operation == 1){
+                        result = num1Chal + num2Chal;
+                    } else if (operation == 2){
+                        result = num1Chal - num2Chal;
+                    } else if (operation == 3){
+                        result = num1Chal * num2Chal;
+                    } else if (operation == 4){
+                        result = num1Chal / num2Chal;
+                    }
+
+                    this.toReturn = String.valueOf(result);
+                    this.interfaz.showProblem(String.valueOf(num1Chal), String.valueOf(num2Chal));
+
                 case ("box"):
                     switch (num){
                         case ("1"):
@@ -65,7 +90,8 @@ public class reader implements Runnable {
                     }
                 case("board"):
                     this.toReturn = num;
-                    this.interfaz.makeLabel(num);
+                    this.interfaz.setLastMessage(getToReturn());
+                    this.interfaz.makeLabel();
                     break;
             }
             this.interfaz.setLastMessage(getToReturn());

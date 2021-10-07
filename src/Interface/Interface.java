@@ -140,20 +140,21 @@ public class Interface {
         this.namePlayer1.setText(this.name.getText());
         this.client.startSendCli("name "+this.namePlayer1.getText());
 
+
     }
 
-    public void makeLabel(String id) {
+    public void makeLabel() {
         SquareFactory boardGenerator = new SquareFactory();
-        this.board = boardGenerator.createBoard(id);
+        this.board = boardGenerator.createBoard(this.lastMessage);
         DoubleNode squaremaker = this.board.getHead();
         this.square = squaremaker;
         System.out.println(squaremaker.getSquare().getKind());
         while (squaremaker != null) {
             this.principalWindow.add(squaremaker.getSquare().getLabel());
-            squaremaker.getSquare().getLabel().setVisible(true);
             System.out.println(squaremaker.getSquare().getKind());
             squaremaker = squaremaker.getNext();
         }
+        this.principalWindow.repaint();
     }
 
     ActionListener diceButton = new ActionListener() {
@@ -180,6 +181,10 @@ public class Interface {
     public void moveEnemy(int num){
         Runnable run = new Player(name.getText(), square, Avatar1, num, thisInterface, line1, casilla1, 1, true);
         new Thread(run).start();
+    }
+
+    public void showProblem(String num1, String num2){
+
     }
 
     public void actualBox(int squar){
