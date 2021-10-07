@@ -26,7 +26,10 @@ public class reader implements Runnable {
     public String getToReturn(){
         return this.toReturn;
     }
-    
+
+    /**
+     * metodo run del Thread que lee los mensajes recibidos
+     */
     public void run(){
     
         while (true){
@@ -104,6 +107,10 @@ public class reader implements Runnable {
                     this.toReturn = num;
                     this.interfaz.setLastMessage(getToReturn());
                     this.interfaz.makeLabel();
+                    break;
+                case("problem"):
+                    String[] operators = num.split(";");
+                    this.interfaz.showProblem(operators[0], operators[1], operators[2], operators[3]);
                     break;
             }
             this.interfaz.setLastMessage(getToReturn());

@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
+
 import List.*;
 
 /**
@@ -27,7 +27,7 @@ public class Interface {
     private JLabel namePlayer2 = new JLabel();
     private JLabel turnTitle = new JLabel();
     private JLabel playerTurn = new JLabel();
-    private JButton LanzarDado = new JButton();
+    private JButton dice = new JButton();
     private JLabel lastDice = new JLabel();
     private JLabel Avatar2 = new JLabel();
     private JLabel Avatar1 = new JLabel();
@@ -101,7 +101,6 @@ public class Interface {
             this.principalWindow.add(squaretemp.getSquare().getLabel());
             squaretemp = squaretemp.getNext();
         }
-        System.out.println(this.square.getSquare());
 
 
     }
@@ -114,7 +113,7 @@ public class Interface {
         this.namePlayer2.setVisible(true);
         this.turnTitle.setVisible(true);
         this.playerTurn.setVisible(true);
-        this.LanzarDado.setVisible(true);
+        this.dice.setVisible(true);
         this.lastDice.setVisible(true);
         this.Avatar1.setVisible(true);
         this.Avatar2.setVisible(true);
@@ -125,7 +124,7 @@ public class Interface {
     ActionListener joinActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
             JOptionPane.showMessageDialog(null, "Uniendose a una partida");
-            LanzarDado.setEnabled(false);
+            dice.setEnabled(false);
 
             try {
                 createClient();
@@ -165,16 +164,17 @@ public class Interface {
         this.principalWindow.repaint();
     }
 
-    ActionListener diceButton = new ActionListener() {
-        public void actionPerformed(ActionEvent ae){
-            int max = 3;
-            int min = 1;
-            int range = max - min + 1;
-            int dice = (int) (Math.random() * range) + min;
-            lastDice.setText(String.valueOf(dice));
+        public void rollDice(){
+            int dice = (int) (Math.random() * 4) + 1;
+            this.lastDice.setText(String.valueOf(dice));
             System.out.println(dice);
-
-            Runnable run = new Player(name.getText(), square, Avatar1, dice, thisInterface, line1, casilla1, 1, false);
+            //this.dice.setEnabled(false);
+            Runnable run;
+            if (this.server != null) {
+                run = new Player(name.getText(), square, Avatar1, dice, thisInterface, line1, casilla1, true, true);
+            } else {
+                run = new Player(name.getText(), square2, Avatar2, dice, thisInterface, line1, casilla1, true, true);
+            }
             new Thread(run).start();
 
             try{
@@ -185,11 +185,23 @@ public class Interface {
             }
             
         }
-    };
 
-    public void moveEnemy(int num){
-        Runnable run = new Player(name.getText(), square, Avatar1, num, thisInterface, line1, casilla1, 1, true);
+    public void moveEnemy(int num) {
+        Runnable run;
+        boolean forward = false;
+        if (num > 0) {
+            forward = true;
+        }
+        if (num < 0) {
+            num *= -1;
+        }
+        if (this.server == null) {
+            run = new Player(name.getText(), square, Avatar1, num, thisInterface, line1, casilla1, forward, false);
+        } else {
+            run = new Player(name.getText(), square2, Avatar2, num, thisInterface, line1, casilla1, forward, false);
+        }
         new Thread(run).start();
+        //this.dice.setEnabled(true);
     }
 
     public void showProblem(String num1, String oper, String num2, String result) {
@@ -256,8 +268,12 @@ public class Interface {
 
     }
 
-    public void moveSquare1(){
-        this.square = this.square.getNext();
+    public void moveSquare1(boolean forward){
+        if (forward) {
+            this.square = this.square.getNext();
+        } else {
+            this.square = this.square.getPrev();
+        }
     }
 
     public void addLine1() {
@@ -316,8 +332,7 @@ public class Interface {
 
 
         // GameBoard
-        ImageIcon imagenCasilla = new ImageIcon(getClass().getResource("/Images/challenge.png"));
-        ImageIcon imagenDado = new ImageIcon(getClass().getResource("/Images/dice.png"));
+        ImageIcon imageDice = new ImageIcon(getClass().getResource("/Images/dice.png"));
         ImageIcon imageUser = new ImageIcon(getClass().getResource("/Images/user.png"));
         ImageIcon imgPeon1 = new ImageIcon(getClass().getResource("/Images/peon1.png"));
         ImageIcon imgPeon2 = new ImageIcon(getClass().getResource("/Images/peon2.png"));
@@ -347,9 +362,9 @@ public class Interface {
         playerTurn.setBounds(215,40,100,50);
         playerTurn.setText("Player1");
 
-        LanzarDado.setBounds(215,505,50,50);
-        LanzarDado.setIcon(imagenDado);
-        LanzarDado.addActionListener(diceButton);
+        dice.setBounds(215,505,50,50);
+        dice.setIcon(imageDice);
+        dice.addActionListener(action -> rollDice());
 
         lastDice.setBounds(300,505,50,50);
         lastDice.setText("0");
@@ -360,7 +375,7 @@ public class Interface {
         this.principalWindow.add(this.namePlayer2);
         this.principalWindow.add(this.turnTitle);
         this.principalWindow.add(this.playerTurn);
-        this.principalWindow.add(this.LanzarDado);
+        this.principalWindow.add(this.dice);
         this.principalWindow.add(this.lastDice);
         this.principalWindow.add(this.Avatar1);
         this.principalWindow.add(this.Avatar2);
@@ -372,7 +387,7 @@ public class Interface {
         this.namePlayer2.setVisible(false);
         this.turnTitle.setVisible(false);
         this.playerTurn.setVisible(false);
-        this.LanzarDado.setVisible(false);
+        this.dice.setVisible(false);
         this.lastDice.setVisible(false);
         this.Avatar1.setVisible(false);
         this.Avatar2.setVisible(false);

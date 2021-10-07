@@ -18,123 +18,176 @@ public class Player implements Runnable {
     private int line;
     private int move;
     private Interface inter;
-    private boolean noBox;
+    private boolean forward;
+    private boolean Box;
 
-    public Player(String name, DoubleNode board, JLabel avatar, int move, Interface interfacee, int line, int casilla,
-                  int id, boolean noBox){
+    /**
+     * Constructor that sets the values of the player that'll move
+     * @param name name of the player to move
+     * @param board DoubleNode containing the square the player is currently in
+     * @param avatar label of the player to move
+     * @param move number of times to move
+     * @param inter frame where the player is going to move, in which all the players' info is stored
+     * @param line row in which the player is currently
+     * @param casilla column in which the player is
+     * @param forward boolean to check move direction
+     * @param Box boolean to check if the player is moving because of a dice roll of because of a square he landed in
+     */
+    public Player(String name, DoubleNode board, JLabel avatar, int move, Interface inter, int line, int casilla, boolean forward, boolean Box){
         this.name = name;
         this.position = board;
         this.avatar = avatar;
         this.move = move;
-        this.inter = interfacee;
+        this.inter = inter;
         this.line = line;
         this.casilla = casilla;
         this.forward = forward;
         this.Box = Box;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    /**
+     * reassigns the current square of the player
+     */
+    public void moveList(boolean forward){
+        this.inter.moveSquare1(forward);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int rollDice(){
-        int max = 3;
-        int min = 1;
-        int range = max - min + 1;
-        int dice = (int) (Math.random() * range) + min;
-        moveList(dice);
-        return dice;
-
-    }
-
-    public void moveList(int times){
-        this.inter.moveSquare1();
-        /*if (Objects.equals(this.position.getSquare().getKind(), "Tunnel")){
-            for (int i = 0; i <= times; i++) {
-                if (this.position.getNext() != null) {
-                    this.position = this.position.getNext();
-                }
-            }
-        } else if (Objects.equals(this.position.getSquare().getKind(), "Trap")){
-            for (int i = 0; i <= times; i++) {
-                if (this.position.getPrev() != null) {
-                    this.position = this.position.getPrev();
-                }
-            }
-        }*/
-    }
-
+    /**
+     * run method of theThread that moves the image of the player
+     */
     public void run() {
-        moveImage();
+        if (this.position.getNext() != null) {
+            moveImage();
+        }
     }
 
-    public void moveImage(){
+    /**
+     * moves the player's label the intended number of times in the expected direction
+     */
+    public void moveImage() {
         int movexA1 = this.avatar.getX();
         int moveyA1 = this.avatar.getY();
 
         int cantAvanzar = 92;
         int recorrido = 0;
 
-        for(int i=0; i != this.move; i++) {
-            if (line % 2 == 0) {
-                while (recorrido < (cantAvanzar)) {
-                    if (casilla % 4 == 0) {
-                        moveyA1 += 5;
-                        this.avatar.setLocation(movexA1, moveyA1);
-                        recorrido += 5;
-                        line += 1;
-                        this.inter.addLine1();
-                    } else {
-                        movexA1 -= 5;
-                        this.avatar.setLocation(movexA1, moveyA1);
-                        recorrido += 5;
-                    }
+        if (this.forward) { //movimiento adelante
+            for (int i = 0; i != this.move; i++) {
+                if (line % 2 == 0) {
+                    while (recorrido < (cantAvanzar)) {
+                        if (casilla % 4 == 0) {
+                            moveyA1 += 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                            line += 1;
+                            this.inter.addLine1();
+                        } else {
+                            movexA1 -= 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                        }
 
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception e) {
-                        Thread.currentThread().interrupt();
+                        try {
+                            Thread.sleep(50);
+                        } catch (Exception e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
+                    casilla += 1;
+                    this.inter.addCasilla1();
+                } else {
+
+                    while (recorrido < (cantAvanzar)) {
+
+                        if (casilla % 4 == 0) {
+                            moveyA1 += 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                            line += 1;
+                            this.inter.addLine1();
+                        } else {
+                            movexA1 += 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                        }
+
+                        try {
+                            Thread.sleep(50);
+                        } catch (Exception e) {
+                            Thread.currentThread().interrupt();
+                        }
+
+                    }
+                    casilla += 1;
+                    this.inter.addCasilla1();
+
                 }
-                casilla += 1;
-                this.inter.addCasilla1();
-            } else {
+                moveList(this.forward);
+                recorrido = 0;
+            }
+        } else { //movimiento atras
+            for(int i=0; i != this.move; i++) {
+                if (line % 2 == 0) {
 
-                while (recorrido < (cantAvanzar)) {
+                    while (recorrido < (cantAvanzar)) {
+                        if (casilla % 4 == 0) {
+                            moveyA1 -= 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                            line -= 1;
+                            this.inter.removeLine1();
+                        } else {
+                            movexA1 += 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                        }
 
-                    if (casilla % 4 == 0) {
-                        moveyA1 += 5;
-                        this.avatar.setLocation(movexA1, moveyA1);
-                        recorrido += 5;
-                        line += 1;
-                        this.inter.addLine1();
-                    } else {
-                        movexA1 += 5;
-                        this.avatar.setLocation(movexA1, moveyA1);
-                        recorrido += 5;
+                        try {
+                            Thread.sleep(50);
+                        } catch (Exception e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
+                    casilla -= 1;
+                    this.inter.removeCasilla1();
+                } else {
 
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception e) {
-                        Thread.currentThread().interrupt();
+                    while (recorrido < (cantAvanzar)) {
+
+                        if (casilla % 4 == 0) {
+                            moveyA1 -= 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                            line -= 1;
+                            this.inter.removeLine1();
+                        } else {
+                            movexA1 -= 5;
+                            this.avatar.setLocation(movexA1, moveyA1);
+                            recorrido += 5;
+                        }
+
+                        try {
+                            Thread.sleep(50);
+                        } catch (Exception e) {
+                            Thread.currentThread().interrupt();
+                        }
+
                     }
+                    casilla -= 1;
+                    this.inter.removeCasilla1();
 
                 }
-                casilla += 1;
-                this.inter.addCasilla1();
+                moveList(this.forward);
+                recorrido = 0;
+            }
+        }
+        if (Box) {
+            try {
+                this.inter.actualBox(1);
+            } catch (IOException e){
 
             }
-            System.out.println("casilla de P1 = " + casilla);
-            moveList(1);
-            recorrido = 0;
-        }
-        if (noBox == false) {
-            this.inter.actualBox(1);
+
         }
 
     }
