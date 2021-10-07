@@ -46,6 +46,7 @@ public class reader implements Runnable {
                     this.interfaz.setEnemyName(num);
                     break;
                 case ("next"):
+                    this.interfaz.changeName();
                     this.toReturn = "ready";
                     break;
                 case ("dice"):

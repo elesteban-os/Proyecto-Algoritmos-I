@@ -53,6 +53,9 @@ public class Interface {
     private int casilla1 = 1;
     private int line1 = 1;
 
+    private String p1 = this.namePlayer1.getText(); 
+    private String p2 = this.namePlayer2.getText(); 
+
 
     ActionListener createActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
@@ -171,10 +174,11 @@ public class Interface {
 
             try{
                 server.startSendServ("dice "+dice);
+                server.startSendServ("next "+"3");
             } catch (IOException io) {
 
             }
-
+            
         }
     };
 
@@ -225,6 +229,13 @@ public class Interface {
         this.namePlayer2.setText(name);
     }
 
+    public void changeName(){
+        if(playerTurn.getText() == namePlayer1.getText()){
+            this.playerTurn.setText(p2);
+        }else{
+            this.playerTurn.setText(p1);
+        }
+    }
 
     public Interface(){
         this.title.setBounds(95, 150, 300, 100);
