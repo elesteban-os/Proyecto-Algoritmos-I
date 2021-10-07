@@ -53,6 +53,10 @@ public class Interface {
     private int casilla1 = 1;
     private int line1 = 1;
 
+    private int casilla2 = 1;
+    private int line2 = 1;
+
+
     private String p1 = this.namePlayer1.getText(); 
     private String p2 = this.namePlayer2.getText(); 
 
@@ -85,7 +89,8 @@ public class Interface {
 
 
         SquareFactory boardGenerator = new SquareFactory();
-        String id = boardGenerator.generateBoard();
+        String id = "Goal,Challenge,Tunnel,Trap,Challenge,Trap,Tunnel,Trap,Trap,Trap,Tunnel,Challenge,Trap,Challenge,Challenge,Goal";
+//boardGenerator.generateBoard();
 
         this.server.startSendServ("board "+id);
 
@@ -187,24 +192,66 @@ public class Interface {
         new Thread(run).start();
     }
 
-    public void showProblem(String num1, String num2){
-
+    public void showProblem(String num1, String oper, String num2, String result) {
+        String problem = "Reto: resuelva la siguiente operación: ";
+        problem += num1 + " " + oper + " " + num2;
+        String num = JOptionPane.showInputDialog(problem);
+        System.out.println("num pro "+ num);
+        System.out.println(result);
+        if (!result.equals(num)) {
+            Runnable run = new Player(name.getText(), square, Avatar1, 1, thisInterface, line1, casilla1, false, false);
+            new Thread(run).start();
+        }
     }
 
-    public void actualBox(int squar){
+    public void sendProblem(String num1, String oper, String num2, String result) throws IOException {
+        if (server != null){
+            server.startSendServ("problem " + num1 + ";" + oper + ";" + num2 + ";" + result);
+        } else {
+            client.startSendCli("problem " + num1 + ";" + oper + ";" + num2 + ";" + result);
+        }
+    }
+
+    public void actualBox(int squar) throws IOException {
         System.out.println(this.square.getSquare().getKind());
-        if (this.square.getSquare().getKind().equals("Challenge")){
-            String num = JOptionPane.showInputDialog("Cuánto es 2+2");
-            System.out.println("-"+num+"-");
-            if (num.equals("4")){
-                System.out.println("sies");
-            }
-        }
-        else if (this.square.getSquare().getKind().equals("Trap")){
-            System.out.println("se echa para atras");
-        }
-        else if (this.square.getSquare().getKind().equals("Tunnel")){
-            System.out.println("se echa para atras");
+        int move;
+        Runnable run;
+        switch (this.square.getSquare().getKind()) {
+            case "Challenge":
+                try {
+                    server.startSendServ("challenge 1");
+                    System.out.println("enviando challenge");
+                } catch (IOException io) {
+                }
+                break;
+            case "Trap":
+               move = (int) (Math.random() * 3) + 1;
+                run = new Player(name.getText(), square, Avatar1, move, thisInterface, line1, casilla1, false, false);
+                new Thread(run).start();
+
+                move *= -1;
+
+                if (server != null){
+                    server.startSendServ("dice "+ move);
+                } else {
+                    client.startSendCli("dice "+ move);
+                }
+                System.out.println("se echa pa'tra");
+                break;
+            case "Tunnel":
+                move = (int) (Math.random() * 3) + 1;
+
+                run = new Player(name.getText(), square, Avatar1, move, thisInterface, line1, casilla1, true, false);
+                new Thread(run).start();
+
+                if (server != null){
+                    server.startSendServ("dice "+ move);
+                } else {
+                    client.startSendCli("dice "+ move);
+                }
+
+                System.out.println("se echa pa'lante");
+                break;
         }
 
     }
@@ -219,6 +266,14 @@ public class Interface {
 
     public void addCasilla1() {
         this.casilla1++;
+    }
+
+    public void removeLine1() {
+        this.line1--;
+    }
+
+    public void removeCasilla1(){
+        this.casilla1--;
     }
 
     public void setLastMessage(String message){

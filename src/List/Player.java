@@ -1,6 +1,7 @@
 package List;
 
 import Interface.Interface;
+import java.io.IOException;
 import List.*;
 
 import javax.swing.*;
@@ -28,7 +29,8 @@ public class Player implements Runnable {
         this.inter = interfacee;
         this.line = line;
         this.casilla = casilla;
-        this.noBox = noBox;
+        this.forward = forward;
+        this.Box = Box;
     }
 
     public void setName(String name) {

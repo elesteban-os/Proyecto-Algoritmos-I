@@ -56,30 +56,41 @@ public class reader implements Runnable {
                     this.interfaz.moveEnemy(dice);
                     break;
                 case ("challenge"):
-                    String oper;
+                    String oper = null;
                     int result = 0;
-                    int max = 50;
-                    int min = 1;
-                    int range = max - min + 1;
-                    int num1Chal = (int) (Math.random() * range) + min;
-                    int num2Chal = (int) (Math.random() * range) + min;
+                    int num1Chal = (int) (Math.random() * 50) + 1;
+                    int num2Chal = (int) (Math.random() * 50) + 1;
 
-                    max = 4;
-                    int operation = (int) (Math.random() * range) + min;
+                    int operation = (int) (Math.random() * 4) + 1;
 
                     if (operation == 1){
                         result = num1Chal + num2Chal;
+                        oper = "+";
                     } else if (operation == 2){
                         result = num1Chal - num2Chal;
+                        oper = "-";
                     } else if (operation == 3){
                         result = num1Chal * num2Chal;
+                        oper = "*";
                     } else if (operation == 4){
                         result = num1Chal / num2Chal;
+                        oper = "/";
                     }
 
                     this.toReturn = String.valueOf(result);
-                    this.interfaz.showProblem(String.valueOf(num1Chal), String.valueOf(num2Chal));
 
+                    String num1 = String.valueOf(num1Chal);
+                    String num2 = String.valueOf(num2Chal);
+                    String res = String.valueOf(result);
+
+                    try {
+                        this.interfaz.sendProblem(num1, oper, num2, res);
+                        System.out.println("enviando problem 2");
+
+                    } catch (IOException io){
+
+                    }
+                    break;
                 case ("box"):
                     switch (num){
                         case ("1"):
