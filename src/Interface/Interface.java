@@ -169,12 +169,8 @@ public class Interface {
             this.lastDice.setText(String.valueOf(dice));
             System.out.println(dice);
             //this.dice.setEnabled(false);
-            Runnable run;
-            if (this.server != null) {
-                run = new Player(name.getText(), square, Avatar1, dice, thisInterface, line1, casilla1, true, true);
-            } else {
-                run = new Player(name.getText(), square2, Avatar2, dice, thisInterface, line1, casilla1, true, true);
-            }
+            Runnable run = new Player(name.getText(), square, Avatar1, dice, thisInterface, line1, casilla1, true, true);
+
             new Thread(run).start();
 
             try{
@@ -187,7 +183,6 @@ public class Interface {
         }
 
     public void moveEnemy(int num) {
-        Runnable run;
         boolean forward = false;
         if (num > 0) {
             forward = true;
@@ -195,11 +190,8 @@ public class Interface {
         if (num < 0) {
             num *= -1;
         }
-        if (this.server == null) {
-            run = new Player(name.getText(), square, Avatar1, num, thisInterface, line1, casilla1, forward, false);
-        } else {
-            run = new Player(name.getText(), square2, Avatar2, num, thisInterface, line1, casilla1, forward, false);
-        }
+        Runnable run = new Player(name.getText(), square2, Avatar2, num, thisInterface, line2, casilla2, forward, false);
+
         new Thread(run).start();
         //this.dice.setEnabled(true);
     }
@@ -237,7 +229,7 @@ public class Interface {
                 }
                 break;
             case "Trap":
-               move = (int) (Math.random() * 3) + 1;
+                move = (int) (Math.random() * 3) + 1;
                 run = new Player(name.getText(), square, Avatar1, move, thisInterface, line1, casilla1, false, false);
                 new Thread(run).start();
 

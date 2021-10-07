@@ -8,7 +8,7 @@ public class SquareFactory {
     /**
      * Creates a string with the kinds of Squares that will be added
      */
-    public String generateBoard() {
+    public String generateBoardID() {
         this.boardID = new StringBuilder();
         int traps = (int) (Math.random() * 7);
         int tunnels = 8 - traps;
@@ -17,7 +17,7 @@ public class SquareFactory {
             String kind = "";
             if (i == 0 || i == 15) {
                 kind = "Goal";
-                tunnels --;
+                tunnels--;
             } else {
                 boolean generated = false;
                 while (!generated) {
@@ -55,13 +55,13 @@ public class SquareFactory {
         String[] boxArray = id.split(",");
         for (int i = 0; i < boxArray.length; i++) {
             int x;
-            if (i < 4 || (8 <= i && i < 12)) {
+            if (i / 4 % 2 == 0) {
                 x = 70 + ((i % 4) * 92);
             } else {
                 x = 346 - ((i % 4) * 92);
             }
             int y = 130 + ((i / 4) * 92);
-            this.board.addSquare(new Square(boxArray[i], x, y));
+            this.board.addSquare(new Square(boxArray[i], i, x, y));
         }
         return this.board;
     }

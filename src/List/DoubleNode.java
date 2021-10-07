@@ -8,9 +8,9 @@ public class DoubleNode {
 
     /**
      * Constructor
-     * @param p previous DoubleNode
+     * @param prev previous DoubleNode
      * @param square a Square for this DoubleNode
-     * @param n next DoubleNode
+     * @param next next DoubleNode
      */
 
     public DoubleNode(DoubleNode prev, Square square, DoubleNode next){
