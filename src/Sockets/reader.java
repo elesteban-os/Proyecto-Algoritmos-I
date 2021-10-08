@@ -38,7 +38,7 @@ public class reader implements Runnable {
             try{
                 message = input.readUTF();
             } catch (IOException io){
-
+                System.out.println("No se pudo leer el texto.");
             }
             
             StringTokenizer action = new StringTokenizer(message);

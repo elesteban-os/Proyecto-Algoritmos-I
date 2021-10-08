@@ -136,7 +136,7 @@ public class Player implements Runnable {
                 waitThread();
                 this.window.actualBox();
             } catch (IOException e) {
-
+                System.out.println("g");
             }
         }
     }

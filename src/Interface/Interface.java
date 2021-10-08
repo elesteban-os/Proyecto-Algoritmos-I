@@ -73,7 +73,7 @@ public class Interface {
             try {
                 createServer();
             } catch (IOException io){
-
+                System.out.println("No se pudo crear el servidor. Comprueba que no hay un segundo servidor abierto.");
             }
         }
     };
@@ -136,7 +136,7 @@ public class Interface {
             try {
                 createClient();
             }catch (IOException io){
-
+                System.out.println("No se pudo crear el cliente. Asegurate que haya un servidor activo.");
             }
             setWaitingClose();
             title.setVisible(false);
@@ -197,7 +197,7 @@ public class Interface {
                 client.startSendCli("next 0");
             }
         } catch (IOException io) {
-
+            System.out.println("No se pudo enviar el mensaje");
         }
     }
 
@@ -374,12 +374,21 @@ public class Interface {
     /**
      * Función que intercambia los nombres en el label de los turnos de jugador.
      */
-    public void changeName(){
-        if(playerTurn.getText() == namePlayer1.getText()){
-            this.playerTurn.setText(p2);
-        }else{
-            this.playerTurn.setText(p1);
+    public void changeName() {
+        if (this.playerTurn.getText().equals(this.namePlayer2.getText())) {
+            this.playerTurn.setText(this.namePlayer1.getText());
+        } else {
+            this.playerTurn.setText(this.namePlayer2.getText());
         }
+    }
+
+    /**
+     * Función que crea un mensaje de despedida cuándo el juego se termina.
+     * @param message mensaje que es recibido.
+     */
+    public void endMessage(String message) {
+        JOptionPane.showMessageDialog(null, message, "Fin de Juego", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
     }
 
     /**
@@ -437,7 +446,7 @@ public class Interface {
         turnTitle.getFont();
 
         playerTurn.setBounds(215,40,100,50);
-        playerTurn.setText("Player1");
+        playerTurn.setText(this.namePlayer1.getText());
 
         log.setBounds(180,80,100,100);
 
