@@ -44,17 +44,11 @@ public class Interface {
 
     private Player player;
 
-    private DoubleNode square;
-    private DoubleNode square2;
+    private DoubleNode squareP1;
+    private DoubleNode squareP2;
 
     ImageIcon imgPeon1 = new ImageIcon(getClass().getResource("/Images/peon1.png"));
     ImageIcon imgPeon2 = new ImageIcon(getClass().getResource("/Images/peon2.png"));
-
-    private int casilla1 = 1;
-    private int line1 = 1;
-
-    private int casilla2 = 1;
-    private int line2 = 1;
 
 
     private String p1 = this.namePlayer1.getText(); 
@@ -208,14 +202,11 @@ public class Interface {
      * @param num numero de veces que se mueve el jugador.
      */
     public void moveEnemy(int num) {
-        boolean forward = false;
-        if (num > 0) {
-            forward = true;
-        }
-        if (num < 0) {
+        boolean forward = num > 0;
+        if (!forward) {
             num *= -1;
         }
-        Runnable run = new Player(name.getText(), square2, Avatar2, num, thisInterface, line2, casilla2, forward, false);
+        Runnable run = new Player(squareP2, Avatar2, num, forward, false, true, thisInterface);
 
         new Thread(run).start();
         //this.dice.setEnabled(true);
@@ -235,7 +226,7 @@ public class Interface {
         System.out.println("num pro "+ num);
         System.out.println(result);
         if (!result.equals(num)) {
-            Runnable run = new Player(name.getText(), square, Avatar1, 1, thisInterface, line1, casilla1, false, false);
+            Runnable run = new Player(squareP1, Avatar1, 1, false, false, false, thisInterface);
             new Thread(run).start();
         }
     }
@@ -262,10 +253,10 @@ public class Interface {
      * @throws IOException
      */
     public void actualBox(int squar) throws IOException {
-        System.out.println(this.square.getSquare().getKind());
+        System.out.println(this.squareP1.getSquare().getKind());
         int move;
         Runnable run;
-        switch (this.square.getSquare().getKind()) {
+        switch (this.squareP1.getSquare().getKind()) {
             case "Challenge":
                 try {
                     server.startSendServ("challenge 1");
@@ -275,7 +266,7 @@ public class Interface {
                 break;
             case "Trap":
                 move = (int) (Math.random() * 3) + 1;
-                run = new Player(name.getText(), square, Avatar1, move, thisInterface, line1, casilla1, false, false);
+                run = new Player(squareP1, Avatar1, move, false, false, false, thisInterface);
                 new Thread(run).start();
 
                 move *= -1;
@@ -290,7 +281,7 @@ public class Interface {
             case "Tunnel":
                 move = (int) (Math.random() * 3) + 1;
 
-                run = new Player(name.getText(), square, Avatar1, move, thisInterface, line1, casilla1, true, false);
+                run = new Player(squareP1, Avatar1, move, true, false, false, thisInterface);
                 new Thread(run).start();
 
                 if (server != null){

@@ -2,54 +2,37 @@ package List;
 
 import Interface.Interface;
 import java.io.IOException;
-import List.*;
 
 import javax.swing.*;
-import java.lang.Math;
-
-import java.util.Objects;
 
 public class Player implements Runnable {
 
-    private String name;
     private DoubleNode position;
-    private JLabel avatar;
-    private int casilla;
-    private int line;
+    private JLabel label;
     private int move;
-    private Interface inter;
     private boolean forward;
-    private boolean Box;
+    private boolean die;
+    private boolean enemy;
+    private Interface window;
 
     /**
      * Constructor that sets the values of the player that'll move
-     * @param name name of the player to move
-     * @param board DoubleNode containing the square the player is currently in
-     * @param avatar label of the player to move
-     * @param move number of times to move
-     * @param inter frame where the player is going to move, in which all the players' info is stored
-     * @param line row in which the player is currently
-     * @param casilla column in which the player is
+     *
+     * @param square  DoubleNode containing the square the player is currently in
+     * @param avatar  label of the player to move
+     * @param move    number of times to move
+     * @param window  Interface where the player is going to move, in which all the players' info is stored
      * @param forward boolean to check move direction
-     * @param Box boolean to check if the player is moving because of a dice roll of because of a square he landed in
+     * @param die     boolean to check if the player is moving because of a die roll of because of a square he landed in
      */
-    public Player(String name, DoubleNode board, JLabel avatar, int move, Interface inter, int line, int casilla, boolean forward, boolean Box){
-        this.name = name;
-        this.position = board;
-        this.avatar = avatar;
+    public Player(DoubleNode square, JLabel avatar, int move, boolean forward, boolean die, boolean enemy, Interface window) {
+        this.position = square;
+        this.label = avatar;
         this.move = move;
-        this.inter = inter;
-        this.line = line;
-        this.casilla = casilla;
         this.forward = forward;
-        this.Box = Box;
-    }
-
-    /**
-     * reassigns the current square of the player
-     */
-    public void moveList(boolean forward){
-        this.inter.moveSquare1(forward);
+        this.die = die;
+        this.enemy = enemy;
+        this.window = window;
     }
 
     /**
@@ -61,134 +44,85 @@ public class Player implements Runnable {
         }
     }
 
+    public void waitThread() {
+        try {
+            Thread.sleep(50);
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     /**
      * moves the player's label the intended number of times in the expected direction
      */
     public void moveImage() {
-        int movexA1 = this.avatar.getX();
-        int moveyA1 = this.avatar.getY();
-
-        int cantAvanzar = 92;
-        int recorrido = 0;
-
+        int posX = this.label.getX();
+        int posY = this.label.getY();
+        int number = 0;
+        if (this.enemy) {
+            number += 1;
+        }
         if (this.forward) { //movimiento adelante
-            for (int i = 0; i != this.move; i++) {
-                if (line % 2 == 0) {
-                    while (recorrido < (cantAvanzar)) {
-                        if (casilla % 4 == 0) {
-                            moveyA1 += 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
-                            line += 1;
-                            this.inter.addLine1();
-                        } else {
-                            movexA1 -= 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
+            for (int i = 0; i < this.move; i++) {
+                if (this.position.getNext() != null) {
+                    this.position = this.position.getNext();
+                    int pos = this.position.getSquare().getNumber();
+                    if (pos / 4 % 2 == 0 && !(pos % 4 == 0)) {
+                        while (posX < 85 + ((pos % 4) * 92)) {
+                            posX += 5;
+                            this.label.setLocation(posX, posY);
+                            this.waitThread();
                         }
-
-                        try {
-                            Thread.sleep(50);
-                        } catch (Exception e) {
-                            Thread.currentThread().interrupt();
+                    } else if (pos % 4 == 0) {
+                        while (posY < 135 + 35 * number + pos / 4 * 92) {
+                            posY += 5;
+                            this.label.setLocation(posX, posY);
+                            this.waitThread();
+                        }
+                    } else {
+                        while (posX > 361 - ((pos % 4) * 92)) {
+                            posX -= 5;
+                            this.label.setLocation(posX, posY);
+                            this.waitThread();
                         }
                     }
-                    casilla += 1;
-                    this.inter.addCasilla1();
-                } else {
-
-                    while (recorrido < (cantAvanzar)) {
-
-                        if (casilla % 4 == 0) {
-                            moveyA1 += 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
-                            line += 1;
-                            this.inter.addLine1();
-                        } else {
-                            movexA1 += 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
-                        }
-
-                        try {
-                            Thread.sleep(50);
-                        } catch (Exception e) {
-                            Thread.currentThread().interrupt();
-                        }
-
-                    }
-                    casilla += 1;
-                    this.inter.addCasilla1();
-
                 }
-                moveList(this.forward);
-                recorrido = 0;
             }
+            this.window.moveSquare(this.position, !this.enemy);
         } else { //movimiento atras
-            for(int i=0; i != this.move; i++) {
-                if (line % 2 == 0) {
-
-                    while (recorrido < (cantAvanzar)) {
-                        if (casilla % 4 == 0) {
-                            moveyA1 -= 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
-                            line -= 1;
-                            this.inter.removeLine1();
-                        } else {
-                            movexA1 += 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
+            for (int i = 0; i < this.move; i++) {
+                if (this.position.getNext() != null) {
+                    this.position = this.position.getNext();
+                    int pos = this.position.getSquare().getNumber();
+                    if (pos / 4 % 2 == 0 && !(pos % 4 == 0)) {
+                        while (posX > 85 + ((pos % 4) * 92)) {
+                            posX -= 5;
+                            this.label.setLocation(posX, posY);
+                            this.waitThread();
                         }
-
-                        try {
-                            Thread.sleep(50);
-                        } catch (Exception e) {
-                            Thread.currentThread().interrupt();
+                    } else if (pos % 4 == 0) {
+                        while (posY > 135 + 35 * number + pos / 4 * 92) {
+                            posY -= 5;
+                            this.label.setLocation(posX, posY);
+                            this.waitThread();
+                        }
+                    } else {
+                        while (posX < 361 - ((pos % 4) * 92)) {
+                            posX += 5;
+                            this.label.setLocation(posX, posY);
+                            this.waitThread();
                         }
                     }
-                    casilla -= 1;
-                    this.inter.removeCasilla1();
-                } else {
-
-                    while (recorrido < (cantAvanzar)) {
-
-                        if (casilla % 4 == 0) {
-                            moveyA1 -= 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
-                            line -= 1;
-                            this.inter.removeLine1();
-                        } else {
-                            movexA1 -= 5;
-                            this.avatar.setLocation(movexA1, moveyA1);
-                            recorrido += 5;
-                        }
-
-                        try {
-                            Thread.sleep(50);
-                        } catch (Exception e) {
-                            Thread.currentThread().interrupt();
-                        }
-
-                    }
-                    casilla -= 1;
-                    this.inter.removeCasilla1();
-
                 }
-                moveList(this.forward);
-                recorrido = 0;
             }
+            this.window.moveSquare(this.position, !this.enemy);
         }
-        if (Box) {
+        if (die) {
             try {
-                this.inter.actualBox(1);
-            } catch (IOException e){
+                this.window.actualBox(1);
+            } catch (IOException e) {
 
             }
-
         }
-
     }
 }
