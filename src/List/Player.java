@@ -58,6 +58,7 @@ public class Player implements Runnable {
     public void moveImage() {
         int posX = this.label.getX();
         int posY = this.label.getY();
+
         int number = 0;
         if (this.enemy) {
             number += 1;
@@ -66,6 +67,7 @@ public class Player implements Runnable {
             for (int i = 0; i < this.move; i++) {
                 if (this.position.getNext() != null) {
                     this.position = this.position.getNext();
+                    this.window.moveSquare(this.forward, !this.enemy);
                     int pos = this.position.getSquare().getNumber();
                     if (pos / 4 % 2 == 0 && !(pos % 4 == 0)) {
                         while (posX < 85 + ((pos % 4) * 92)) {
@@ -86,15 +88,28 @@ public class Player implements Runnable {
                             this.waitThread();
                         }
                     }
+                } else {
+                    this.window.disableDie();
+                    if (!this.enemy){
+                        this.window.endMessage("¡¡¡ENHORABUENA COMPA!!!");
+                    } else {
+                        this.window.endMessage("MEJOR SUERTE LA PRÓXIMA :c");
+                    }
+                    i = this.move;
+                }
+                if (die) {
+                    this.window.updateRollLabel(this.move - i - 1);
+                } else {
+                    this.window.setLog("Avanza " + (this.move - i - 1));
                 }
             }
-            this.window.moveSquare(this.position, !this.enemy);
-        } else { //movimiento atras
+        } else {
             for (int i = 0; i < this.move; i++) {
-                if (this.position.getNext() != null) {
-                    this.position = this.position.getNext();
+                if (this.position.getPrev() != null) {
+                    this.position = this.position.getPrev();
+                    this.window.moveSquare(this.forward, !this.enemy);
                     int pos = this.position.getSquare().getNumber();
-                    if (pos / 4 % 2 == 0 && !(pos % 4 == 0)) {
+                    if ((pos + 1) / 4 % 2 == 0 && !((pos + 1) % 4 == 0)) {
                         while (posX > 85 + ((pos % 4) * 92)) {
                             posX -= 5;
                             this.label.setLocation(posX, posY);
@@ -115,11 +130,11 @@ public class Player implements Runnable {
                     }
                 }
             }
-            this.window.moveSquare(this.position, !this.enemy);
         }
         if (die) {
             try {
-                this.window.actualBox(1);
+                waitThread();
+                this.window.actualBox();
             } catch (IOException e) {
 
             }

@@ -113,9 +113,14 @@ public class reader implements Runnable {
                     String[] operators = num.split(";");
                     this.interfaz.showProblem(operators[0], operators[1], operators[2], operators[3]);
                     break;
+                case("result"):
+                    this.interfaz.checkResult(num);
+                    break;
+                case("wrong"):
+                    this.interfaz.challengeFailed();
+                    break;
             }
             this.interfaz.setLastMessage(getToReturn());
-            System.out.println(getToReturn());
         }
     }
 

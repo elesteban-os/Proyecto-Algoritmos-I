@@ -27,10 +27,11 @@ public class Interface {
     private JLabel namePlayer2 = new JLabel();
     private JLabel turnTitle = new JLabel();
     private JLabel playerTurn = new JLabel();
-    private JButton dice = new JButton();
-    private JLabel lastDice = new JLabel();
+    private JButton die = new JButton();
+    private JLabel lastRoll = new JLabel();
     private JLabel Avatar2 = new JLabel();
     private JLabel Avatar1 = new JLabel();
+    private JLabel log = new JLabel();
 
     private JLabel waiting = new JLabel("Esperando a que se una otro usuario.");
 
@@ -54,8 +55,10 @@ public class Interface {
     private String p1 = this.namePlayer1.getText(); 
     private String p2 = this.namePlayer2.getText();
 
+    private int result;
+
     /**
-     * Escuchador del botón de crear.
+     * Función que escucha el botón de crear.
      */
     ActionListener createActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
@@ -89,8 +92,7 @@ public class Interface {
 
 
         SquareFactory boardGenerator = new SquareFactory();
-        String id = "Goal,Challenge,Tunnel,Trap,Challenge,Trap,Tunnel,Trap,Trap,Trap,Tunnel,Challenge,Trap,Challenge,Challenge,Goal";
-//boardGenerator.generateBoard();
+        String id = boardGenerator.generateBoardID();
 
         this.server.startSendServ("board "+id);
 
@@ -102,8 +104,6 @@ public class Interface {
             this.principalWindow.add(squaretemp.getSquare().getLabel());
             squaretemp = squaretemp.getNext();
         }
-
-
     }
 
     /**
@@ -117,10 +117,11 @@ public class Interface {
         this.namePlayer2.setVisible(true);
         this.turnTitle.setVisible(true);
         this.playerTurn.setVisible(true);
-        this.dice.setVisible(true);
-        this.lastDice.setVisible(true);
+        this.die.setVisible(true);
+        this.lastRoll.setVisible(true);
         this.Avatar1.setVisible(true);
         this.Avatar2.setVisible(true);
+        this.log.setVisible(true);
 
     }
 
@@ -130,7 +131,7 @@ public class Interface {
     ActionListener joinActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
             JOptionPane.showMessageDialog(null, "Uniendose a una partida");
-            dice.setEnabled(false);
+            die.setEnabled(false);
 
             try {
                 createClient();
@@ -168,10 +169,8 @@ public class Interface {
         this.squareP1 = squaremaker;
         this.squareP2 = squaremaker;
 
-        System.out.println(squaremaker.getSquare().getKind());
         while (squaremaker != null) {
             this.principalWindow.add(squaremaker.getSquare().getLabel());
-            System.out.println(squaremaker.getSquare().getKind());
             squaremaker = squaremaker.getNext();
         }
         this.principalWindow.repaint();
@@ -180,26 +179,31 @@ public class Interface {
     /**
      * Función que tira el dado, mueve el jugador y advierte por medio de sockets que el jugador se está moviendo.
      */
-    public void rollDice(){
-        int dice = (int) (Math.random() * 4) + 1;
-        this.lastDice.setText(String.valueOf(dice));
-        System.out.println(dice);
-        //this.dice.setEnabled(false);
-        Runnable run = new Player(squareP1, Avatar1, dice, true, true, false, thisInterface);
+    public void rollDie() {
+        int die = (int) (Math.random() * 4) + 1;
+        this.updateRollLabel(die);
+        this.die.setEnabled(false);
+        Runnable run = new Player(squareP1, Avatar1, die, true, true, false, thisInterface);
 
         new Thread(run).start();
 
         try{
-            server.startSendServ("dice "+dice);
-            server.startSendServ("next "+"3");
+            this.changeName();
+            if (server != null){
+                server.startSendServ("dice "+ die);
+                server.startSendServ("next 0");
+            } else {
+                client.startSendCli("dice "+ die);
+                client.startSendCli("next 0");
+            }
         } catch (IOException io) {
 
         }
     }
 
     /**
-     * Funcion que mueve al jugador enemigo.
-     * @param num numero de veces que se mueve el jugador.
+     * Función que mueve al jugador enemigo.
+     * @param num número de veces que se mueve el jugador.
      */
     public void moveEnemy(int num) {
         boolean forward = num > 0;
@@ -207,9 +211,7 @@ public class Interface {
             num *= -1;
         }
         Runnable run = new Player(squareP2, Avatar2, num, forward, false, true, thisInterface);
-
         new Thread(run).start();
-        //this.dice.setEnabled(true);
     }
 
     /**
@@ -222,12 +224,23 @@ public class Interface {
     public void showProblem(String num1, String oper, String num2, String result) {
         String problem = "Reto: resuelva la siguiente operación: ";
         problem += num1 + " " + oper + " " + num2;
-        String num = JOptionPane.showInputDialog(problem);
-        System.out.println("num pro "+ num);
-        System.out.println(result);
-        if (!result.equals(num)) {
-            Runnable run = new Player(squareP1, Avatar1, 1, false, false, false, thisInterface);
-            new Thread(run).start();
+        String input = JOptionPane.showInputDialog(problem);
+        int num;
+        try {
+            num = Integer.parseInt(input);
+        } catch (Exception e) {
+            num = 999999;
+        }
+        try{
+            this.changeName();
+            if (server != null){
+                server.startSendServ("result "+ num);
+            } else {
+                client.startSendCli("result "+ num);
+            }
+            this.die.setEnabled(true);
+        } catch (IOException io) {
+            System.out.println("No se pudo enviar el mensaje.");
         }
     }
 
@@ -249,20 +262,36 @@ public class Interface {
 
     /**
      * Función que verifica la casilla en la que un jugador cayó.
-     * @param squar Casilla
      * @throws IOException
      */
-    public void actualBox(int squar) throws IOException {
-        System.out.println(this.squareP1.getSquare().getKind());
+    public void actualBox() throws IOException {
         int move;
         Runnable run;
         switch (this.squareP1.getSquare().getKind()) {
             case "Challenge":
-                try {
-                    server.startSendServ("challenge 1");
-                    System.out.println("enviando challenge");
-                } catch (IOException io) {
+                String oper = null;
+                int result = 0;
+                int num1 = (int) (Math.random() * 50) + 1;
+                int num2 = (int) (Math.random() * 50) + 1;
+
+                int operation = (int) (Math.random() * 4) + 1;
+
+                if (operation == 1){
+                    result = num1 + num2;
+                    oper = "+";
+                } else if (operation == 2){
+                    result = num1 - num2;
+                    oper = "-";
+                } else if (operation == 3){
+                    result = num1 * num2;
+                    oper = "*";
+                } else if (operation == 4){
+                    result = num1 / num2;
+                    oper = "/";
                 }
+                this.result = result;
+                this.sendProblem(String.valueOf(num1), oper, String.valueOf(num2));
+                setLog("Reto enviado");
                 break;
             case "Trap":
                 move = (int) (Math.random() * 3) + 1;
@@ -279,29 +308,51 @@ public class Interface {
                 System.out.println("se echa pa'tra");
                 break;
             case "Tunnel":
+
                 move = (int) (Math.random() * 3) + 1;
+                setLog("Avanza " + move);
 
                 run = new Player(squareP1, Avatar1, move, true, false, false, thisInterface);
                 new Thread(run).start();
 
+
                 if (server != null){
                     server.startSendServ("dice "+ move);
                 } else {
-                    client.startSendCli("dice "+ move);
+                    client.startSendCli("dice " + move);
                 }
-
-                System.out.println("se echa pa'lante");
                 break;
         }
 
+
     }
 
-    // Eliminar?
-    public void moveSquare(DoubleNode landed, boolean here){
-        if (here) {
-            this.squareP1 = landed;
+    /**
+     * Función que cambia el texto que hay en el JLabel log
+     * @param text recibe el texto por cambiar
+     */
+    public void setLog(String text){
+        this.log.setText(text);
+    }
+
+    /**
+     * Función que actúa como movimiento para la lista.
+     * @param forward booleano para identificar si la lista va a ir hacia delante o hacia atrás.
+     * @param here booleano para identificar si es la interfaz actual o del enemigo.
+     */
+    public void moveSquare(boolean forward, boolean here){
+        if (forward) {
+            if (here) {
+                this.squareP1 = this.squareP1.getNext();
+            } else {
+                this.squareP2 = this.squareP2.getNext();
+            }
         } else {
-            this.squareP2 = landed;
+            if (here) {
+                this.squareP1 = this.squareP1.getPrev();
+            } else {
+                this.squareP2 = this.squareP2.getPrev();
+            }
         }
     }
 
@@ -320,7 +371,6 @@ public class Interface {
     public void setEnemyName(String name){
         this.namePlayer2.setText(name);
     }
-
     /**
      * Función que intercambia los nombres en el label de los turnos de jugador.
      */
@@ -389,12 +439,14 @@ public class Interface {
         playerTurn.setBounds(215,40,100,50);
         playerTurn.setText("Player1");
 
-        dice.setBounds(215,505,50,50);
-        dice.setIcon(imageDice);
-        dice.addActionListener(action -> rollDice());
+        log.setBounds(180,80,100,100);
 
-        lastDice.setBounds(300,505,50,50);
-        lastDice.setText("0");
+        die.setBounds(215,505,50,50);
+        die.setIcon(imageDice);
+        die.addActionListener(action -> rollDie());
+
+        lastRoll.setBounds(300,505,50,50);
+        lastRoll.setText("0");
 
         this.principalWindow.add(this.playerIcon1);
         this.principalWindow.add(this.playerIcon2);
@@ -402,10 +454,11 @@ public class Interface {
         this.principalWindow.add(this.namePlayer2);
         this.principalWindow.add(this.turnTitle);
         this.principalWindow.add(this.playerTurn);
-        this.principalWindow.add(this.dice);
-        this.principalWindow.add(this.lastDice);
+        this.principalWindow.add(this.die);
+        this.principalWindow.add(this.lastRoll);
         this.principalWindow.add(this.Avatar1);
         this.principalWindow.add(this.Avatar2);
+        this.principalWindow.add(this.log);
 
 
         this.playerIcon1.setVisible(false);
@@ -414,10 +467,11 @@ public class Interface {
         this.namePlayer2.setVisible(false);
         this.turnTitle.setVisible(false);
         this.playerTurn.setVisible(false);
-        this.dice.setVisible(false);
-        this.lastDice.setVisible(false);
+        this.die.setVisible(false);
+        this.lastRoll.setVisible(false);
         this.Avatar1.setVisible(false);
         this.Avatar2.setVisible(false);
+        this.log.setVisible(false);
 
         this.principalWindow.setSize(505, 610);
         this.principalWindow.setLayout(null);

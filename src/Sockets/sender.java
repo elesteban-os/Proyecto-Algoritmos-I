@@ -7,6 +7,7 @@ public class sender {
     private final DataOutputStream output;
 
     /**
+     * Constructor para colocar la salida para los mensajes.
      * @param output permite enviar contenido de un socket
      */
     public sender (DataOutputStream output) {
@@ -14,7 +15,8 @@ public class sender {
     }
 
     /**
-     * @param message permite enviar un mensaje
+     * Función que envía un mensaje.
+     * @param message texto del mensaje.
      * @throws IOException detecta excepciones de E/S
      */
     public void startSender(String message) throws IOException {
