@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+
 import List.*;
 
 public class Interface {
@@ -155,8 +156,8 @@ public class Interface {
         this.client = new Client();
         this.client.startClient(1234, this.thisInterface);
 
-        this.namePlayer1.setText(this.name.getText());
-        this.client.startSendCli("name "+this.namePlayer1.getText());
+        this.namePlayer2.setText(this.name.getText());
+        this.client.startSendCli("name "+this.namePlayer2.getText());
     }
 
     /**
@@ -202,6 +203,29 @@ public class Interface {
     }
 
     /**
+     * desactiva el botón del dado
+     */
+    public void disableDie() {
+        this.die.setEnabled(false);
+    }
+
+    /**
+     * desactiva el botón del dado
+     */
+    public void enableDie() {
+        this.die.setEnabled(true);
+    }
+
+
+    /**
+     * cambia el número que muestra para el dado
+     * @param num numero a mostrar
+     */
+    public void updateRollLabel(int num) {
+        this.lastRoll.setText(String.valueOf(num));
+    }
+
+    /**
      * Función que mueve al jugador enemigo.
      * @param num número de veces que se mueve el jugador.
      */
@@ -215,13 +239,31 @@ public class Interface {
     }
 
     /**
+     * Mueve al jugador una casilla atrás por haber dado una respuesta incorrecta
+     */
+    public void challengeFailed() {
+        Runnable run = new Player(squareP1, Avatar1, 1, false, false, false, thisInterface);
+        new Thread(run).start();
+        try{
+            this.changeName();
+            if (server != null){
+                server.startSendServ("dice "+ -1);
+            } else {
+                client.startSendCli("dice "+ -1);
+            }
+        } catch (IOException io) {
+            System.out.println("d");
+        }
+    }
+
+    /**
      * Función que muestra el problema matemático en la interfaz.
      * @param num1 Primer número.
      * @param oper Operador matemático.
      * @param num2 Segundo número.
-     * @param result Resultado de la operación.
      */
-    public void showProblem(String num1, String oper, String num2, String result) {
+    public void showProblem(String num1, String oper, String num2) {
+        this.die.setEnabled(false);
         String problem = "Reto: resuelva la siguiente operación: ";
         problem += num1 + " " + oper + " " + num2;
         String input = JOptionPane.showInputDialog(problem);
@@ -249,14 +291,31 @@ public class Interface {
      * @param num1 Primer número.
      * @param oper Operador matemático.
      * @param num2 Segundo número
-     * @param result Resultado de la operación matemática.
      * @throws IOException
      */
-    public void sendProblem(String num1, String oper, String num2, String result) throws IOException {
+    public void sendProblem(String num1, String oper, String num2) throws IOException {
         if (server != null){
-            server.startSendServ("problem " + num1 + ";" + oper + ";" + num2 + ";" + result);
+            server.startSendServ("problem " + num1 + ";" + oper + ";" + num2);
         } else {
-            client.startSendCli("problem " + num1 + ";" + oper + ";" + num2 + ";" + result);
+            client.startSendCli("problem " + num1 + ";" + oper + ";" + num2);
+        }
+    }
+
+    /**
+     * Funcion que verifica el resultado del reto
+     * @param answer resultado
+     */
+    public void checkResult(String answer) {
+        if (Integer.parseInt(answer) != this.result) {
+            try {
+                if (server != null){
+                    server.startSendServ("wrong 0");
+                } else {
+                    client.startSendCli("wrong 0");
+                }
+            } catch (IOException io) {
+                System.out.println("No se pudo enviar el mensaje.");
+            }
         }
     }
 
@@ -295,17 +354,17 @@ public class Interface {
                 break;
             case "Trap":
                 move = (int) (Math.random() * 3) + 1;
+                setLog("Retrocede " + move);
                 run = new Player(squareP1, Avatar1, move, false, false, false, thisInterface);
                 new Thread(run).start();
 
                 move *= -1;
 
                 if (server != null){
-                    server.startSendServ("dice "+ move);
+                    server.startSendServ("dice " + move);
                 } else {
-                    client.startSendCli("dice "+ move);
+                    client.startSendCli("dice " + move);
                 }
-                System.out.println("se echa pa'tra");
                 break;
             case "Tunnel":
 
@@ -369,7 +428,11 @@ public class Interface {
      * @param name Nombre del jugador.
      */
     public void setEnemyName(String name){
-        this.namePlayer2.setText(name);
+        if (this.server != null) {
+            this.namePlayer2.setText(name);
+        } else {
+            this.namePlayer1.setText(name);
+        }
     }
     /**
      * Función que intercambia los nombres en el label de los turnos de jugador.

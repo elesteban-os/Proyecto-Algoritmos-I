@@ -40,7 +40,6 @@ public class reader implements Runnable {
             } catch (IOException io){
                 System.out.println("No se pudo leer el texto.");
             }
-            
             StringTokenizer action = new StringTokenizer(message);
             String arg = action.nextToken();
             String num = action.nextToken();
@@ -50,60 +49,14 @@ public class reader implements Runnable {
                     this.interfaz.setEnemyName(num);
                     break;
                 case ("next"):
+                    this.interfaz.enableDie();
                     this.interfaz.changeName();
-                    this.toReturn = "ready";
                     break;
                 case ("dice"):
                     this.toReturn = num;
                     int dice = Integer.parseInt(num);
-                    System.out.println(dice);
                     this.interfaz.moveEnemy(dice);
                     break;
-                case ("challenge"):
-                    String oper = null;
-                    int result = 0;
-                    int num1Chal = (int) (Math.random() * 50) + 1;
-                    int num2Chal = (int) (Math.random() * 50) + 1;
-
-                    int operation = (int) (Math.random() * 4) + 1;
-
-                    if (operation == 1){
-                        result = num1Chal + num2Chal;
-                        oper = "+";
-                    } else if (operation == 2){
-                        result = num1Chal - num2Chal;
-                        oper = "-";
-                    } else if (operation == 3){
-                        result = num1Chal * num2Chal;
-                        oper = "*";
-                    } else if (operation == 4){
-                        result = num1Chal / num2Chal;
-                        oper = "/";
-                    }
-
-                    this.toReturn = String.valueOf(result);
-
-                    String num1 = String.valueOf(num1Chal);
-                    String num2 = String.valueOf(num2Chal);
-                    String res = String.valueOf(result);
-
-                    try {
-                        this.interfaz.sendProblem(num1, oper, num2, res);
-                        System.out.println("enviando problem 2");
-
-                    } catch (IOException io){
-
-                    }
-                    break;
-                case ("box"):
-                    switch (num){
-                        case ("1"):
-                            this.toReturn = "challenge";
-                            break;
-                        case ("2"):
-                            this.toReturn = "nothing";
-                            break;
-                    }
                 case("board"):
                     this.toReturn = num;
                     this.interfaz.setLastMessage(getToReturn());
@@ -111,7 +64,7 @@ public class reader implements Runnable {
                     break;
                 case("problem"):
                     String[] operators = num.split(";");
-                    this.interfaz.showProblem(operators[0], operators[1], operators[2], operators[3]);
+                    this.interfaz.showProblem(operators[0], operators[1], operators[2]);
                     break;
                 case("result"):
                     this.interfaz.checkResult(num);

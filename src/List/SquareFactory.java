@@ -10,7 +10,7 @@ public class SquareFactory {
      */
     public String generateBoardID() {
         this.boardID = new StringBuilder();
-        int traps = (int) (Math.random() * 7);
+        int traps = (int) (Math.random() * 4) + 3;
         int tunnels = 8 - traps;
         int challenges = 8;
         for (int i = 0; i < 16; i++) {

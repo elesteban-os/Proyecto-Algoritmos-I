@@ -44,6 +44,9 @@ public class Player implements Runnable {
         }
     }
 
+    /**
+     * pauses the thread to see the animation
+     */
     public void waitThread() {
         try {
             Thread.sleep(50);
@@ -63,7 +66,7 @@ public class Player implements Runnable {
         if (this.enemy) {
             number += 1;
         }
-        if (this.forward) { //movimiento adelante
+        if (this.forward) {
             for (int i = 0; i < this.move; i++) {
                 if (this.position.getNext() != null) {
                     this.position = this.position.getNext();
@@ -115,7 +118,7 @@ public class Player implements Runnable {
                             this.label.setLocation(posX, posY);
                             this.waitThread();
                         }
-                    } else if (pos % 4 == 0) {
+                    } else if ((pos + 1) % 4 == 0) {
                         while (posY > 135 + 35 * number + pos / 4 * 92) {
                             posY -= 5;
                             this.label.setLocation(posX, posY);
@@ -129,6 +132,7 @@ public class Player implements Runnable {
                         }
                     }
                 }
+                this.window.setLog("Retrocede " + (this.move - i - 1));
             }
         }
         if (die) {
