@@ -2,18 +2,18 @@ package Interface;
 
 import Sockets.Client;
 import Sockets.Server;
-
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-
 import List.*;
 
-/**
- *
- */
 public class Interface {
     private JFrame principalWindow = new JFrame("Math Socket");
     private JLabel title = new JLabel("Math Socket");
@@ -58,9 +58,11 @@ public class Interface {
 
 
     private String p1 = this.namePlayer1.getText(); 
-    private String p2 = this.namePlayer2.getText(); 
+    private String p2 = this.namePlayer2.getText();
 
-
+    /**
+     * Escuchador del botón de crear.
+     */
     ActionListener createActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
             title.setVisible(false);
@@ -79,6 +81,10 @@ public class Interface {
         }
     };
 
+    /**
+     * Crea el servidor y los labels del juego.
+     * @throws IOException
+     */
     public void createServer() throws IOException {
 
         server = new Server();
@@ -96,7 +102,8 @@ public class Interface {
 
         this.board = boardGenerator.createBoard(id);
         DoubleNode squaretemp = this.board.getHead();
-        this.square = squaretemp;
+        this.squareP1 = squaretemp;
+        this.squareP2 = squaretemp;
         while (squaretemp != null) {
             this.principalWindow.add(squaretemp.getSquare().getLabel());
             squaretemp = squaretemp.getNext();
@@ -105,6 +112,9 @@ public class Interface {
 
     }
 
+    /**
+     * Cierra elementos de la interfaz.
+     */
     public void setWaitingClose(){
         this.waiting.setVisible(false);
         this.playerIcon1.setVisible(true);
@@ -120,7 +130,9 @@ public class Interface {
 
     }
 
-
+    /**
+     * Función que escucha el botón de unirse e inicializa el socket de cliente.
+     */
     ActionListener joinActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent event){
             JOptionPane.showMessageDialog(null, "Uniendose a una partida");
@@ -140,21 +152,28 @@ public class Interface {
         }
     };
 
+    /**
+     * Función que crea el socket del cliente.
+     * @throws IOException
+     */
     public void createClient() throws IOException {
         this.client = new Client();
         this.client.startClient(1234, this.thisInterface);
 
         this.namePlayer1.setText(this.name.getText());
         this.client.startSendCli("name "+this.namePlayer1.getText());
-
-
     }
 
+    /**
+     * Función que genera los labels aleatorios en la pantalla.
+     */
     public void makeLabel() {
         SquareFactory boardGenerator = new SquareFactory();
         this.board = boardGenerator.createBoard(this.lastMessage);
         DoubleNode squaremaker = this.board.getHead();
-        this.square = squaremaker;
+        this.squareP1 = squaremaker;
+        this.squareP2 = squaremaker;
+
         System.out.println(squaremaker.getSquare().getKind());
         while (squaremaker != null) {
             this.principalWindow.add(squaremaker.getSquare().getLabel());
@@ -164,24 +183,30 @@ public class Interface {
         this.principalWindow.repaint();
     }
 
-        public void rollDice(){
-            int dice = (int) (Math.random() * 4) + 1;
-            this.lastDice.setText(String.valueOf(dice));
-            System.out.println(dice);
-            //this.dice.setEnabled(false);
-            Runnable run = new Player(name.getText(), square, Avatar1, dice, thisInterface, line1, casilla1, true, true);
+    /**
+     * Función que tira el dado, mueve el jugador y advierte por medio de sockets que el jugador se está moviendo.
+     */
+    public void rollDice(){
+        int dice = (int) (Math.random() * 4) + 1;
+        this.lastDice.setText(String.valueOf(dice));
+        System.out.println(dice);
+        //this.dice.setEnabled(false);
+        Runnable run = new Player(squareP1, Avatar1, dice, true, true, false, thisInterface);
 
-            new Thread(run).start();
+        new Thread(run).start();
 
-            try{
-                server.startSendServ("dice "+dice);
-                server.startSendServ("next "+"3");
-            } catch (IOException io) {
+        try{
+            server.startSendServ("dice "+dice);
+            server.startSendServ("next "+"3");
+        } catch (IOException io) {
 
-            }
-            
         }
+    }
 
+    /**
+     * Funcion que mueve al jugador enemigo.
+     * @param num numero de veces que se mueve el jugador.
+     */
     public void moveEnemy(int num) {
         boolean forward = false;
         if (num > 0) {
@@ -196,6 +221,13 @@ public class Interface {
         //this.dice.setEnabled(true);
     }
 
+    /**
+     * Función que muestra el problema matemático en la interfaz.
+     * @param num1 Primer número.
+     * @param oper Operador matemático.
+     * @param num2 Segundo número.
+     * @param result Resultado de la operación.
+     */
     public void showProblem(String num1, String oper, String num2, String result) {
         String problem = "Reto: resuelva la siguiente operación: ";
         problem += num1 + " " + oper + " " + num2;
@@ -208,6 +240,14 @@ public class Interface {
         }
     }
 
+    /**
+     * Función que envía el problema aritmético.
+     * @param num1 Primer número.
+     * @param oper Operador matemático.
+     * @param num2 Segundo número
+     * @param result Resultado de la operación matemática.
+     * @throws IOException
+     */
     public void sendProblem(String num1, String oper, String num2, String result) throws IOException {
         if (server != null){
             server.startSendServ("problem " + num1 + ";" + oper + ";" + num2 + ";" + result);
@@ -216,6 +256,11 @@ public class Interface {
         }
     }
 
+    /**
+     * Función que verifica la casilla en la que un jugador cayó.
+     * @param squar Casilla
+     * @throws IOException
+     */
     public void actualBox(int squar) throws IOException {
         System.out.println(this.square.getSquare().getKind());
         int move;
@@ -260,38 +305,34 @@ public class Interface {
 
     }
 
-    public void moveSquare1(boolean forward){
-        if (forward) {
-            this.square = this.square.getNext();
+    // Eliminar?
+    public void moveSquare(DoubleNode landed, boolean here){
+        if (here) {
+            this.squareP1 = landed;
         } else {
-            this.square = this.square.getPrev();
+            this.squareP2 = landed;
         }
     }
 
-    public void addLine1() {
-        this.line1++;
-    }
-
-    public void addCasilla1() {
-        this.casilla1++;
-    }
-
-    public void removeLine1() {
-        this.line1--;
-    }
-
-    public void removeCasilla1(){
-        this.casilla1--;
-    }
-
+    /**
+     * Función que coloca el último mensaje recibido desde el socket en un atributo.
+     * @param message Mensaje.
+     */
     public void setLastMessage(String message){
         this.lastMessage = message;
     }
 
+    /**
+     * Función que coloca el nombre del enemigo en la interfaz gráfica.
+     * @param name Nombre del jugador.
+     */
     public void setEnemyName(String name){
         this.namePlayer2.setText(name);
     }
 
+    /**
+     * Función que intercambia los nombres en el label de los turnos de jugador.
+     */
     public void changeName(){
         if(playerTurn.getText() == namePlayer1.getText()){
             this.playerTurn.setText(p2);
@@ -300,6 +341,9 @@ public class Interface {
         }
     }
 
+    /**
+     * Función que inicializa todos los elementos de la interfaz gráfica.
+     */
     public Interface(){
         this.title.setBounds(95, 150, 300, 100);
         this.title.setFont(new Font("Bahnschrift", Font.PLAIN, 50));

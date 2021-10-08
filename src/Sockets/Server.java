@@ -2,7 +2,8 @@ package Sockets;
 
 import Interface.Interface;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

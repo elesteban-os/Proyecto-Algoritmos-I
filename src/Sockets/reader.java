@@ -12,6 +12,7 @@ public class reader implements Runnable {
     private Interface interfaz;
 
     /**
+     *
      * @param input permite recibir contenido de un socket
      * @param interfaz interfaz de usuario
      */
